@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Engrais minéraux | JardinExpress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --vert: #2e7d32;
+  --vert-clair: #e8f5e9;
+  --fond: #f4f8f6;
+  --carte: #ffffff;
+  --ombre: 0 6px 18px rgba(0,0,0,0.12);
+  --btn-actif: #43a047;
+  --btn-inactif: #c8e6c9;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--fond);
+  color: #333;
+}
+
+header {
+  background: linear-gradient(135deg, #1b5e20, #43a047);
+  color: white;
+  padding: 28px 18px;
+  border-radius: 0 0 25px 25px;
+  box-shadow: var(--ombre);
+  text-align: center;
+}
+
+main { padding:22px 18px 30px; display:grid; gap:16px; }
+
+.boutonsMode { display:flex; gap:10px; justify-content:center; }
+
+.boutonsMode button {
+  flex:1; padding:12px; font-weight:bold;
+  border-radius:12px; border:none; cursor:pointer;
+}
+
+.champ {
+  display:flex; gap:10px; background:var(--carte);
+  padding:14px; border-radius:14px; box-shadow:var(--ombre);
+}
+
+input, select {
+  font-size:15px; border:none; outline:none;
+  border-radius:10px; padding:10px;
+}
+
+input { flex:2; }
+select { flex:1; background:var(--vert-clair); font-weight:bold; }
+
+.calcul {
+  padding:16px; font-size:16px; border:none;
+  border-radius:18px; background:linear-gradient(135deg,#2e7d32,#66bb6a);
+  color:white; font-weight:bold; cursor:pointer;
+}
+
+.resultat {
+  background: linear-gradient(135deg,#ffffff,#f1f8e9);
+  padding:18px; border-radius:18px; box-shadow:var(--ombre);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧪 Engrais minéraux (NPK + Urée)</h1>
+</header>
+
+<main>
+
+<div class="boutonsMode">
+  <button id="autoBtn" onclick="changerMode('auto')">Automatique</button>
+  <button id="manuelBtn" onclick="changerMode('manuel')">Manuelle</button>
+</div>
+
+<div class="champ">
+  <select id="culture" onchange="remplirEngrais()">
+    <option disabled selected>Choisir la culture</option>
+    <option value="tomate">Tomate</option>
+    <option value="gombo">Gombo</option>
+    <option value="haricot">Haricot vert</option>
+    <option value="laitue">Laitue</option>
+    <option value="epinard">Épinard</option>
+    <option value="chou">Chou</option>
+    <option value="carotte">Carotte</option>
+    <option value="poivron">Poivron</option>
+    <option value="piment">Piment</option>
+    <option value="concombre">Concombre</option>
+    <option value="courgette">Courgette</option>
+    <option value="aubergine">Aubergine</option>
+    <option value="oignon">Oignon</option>
+    <option value="ail">Ail</option>
+    <option value="betterave">Betterave</option>
+    <option value="radis">Radis</option>
+    <option value="pois">Pois</option>
+    <option value="celeri">Céleri</option>
+    <option value="persil">Persil</option>
+    <option value="basilic">Basilic</option>
+    <option value="melon">Melon</option>
+    <option value="pasteque">Pastèque</option>
+    <option value="mais">Maïs doux</option>
+    <option value="ciboulette">Ciboulette</option>
+    <option value="coriandre">Coriandre</option>
+  </select>
+</div>
+
+<div class="champ">
+  <input type="number" id="surface" placeholder="Surface à fertiliser">
+  <select id="uSurface" onchange="remplirEngrais()">
+    <option value="ha">ha</option>
+    <option value="a">are</option>
+    <option value="m2">m²</option>
+  </select>
+</div>
+
+<div class="champ">
+  <input type="number" id="npk" placeholder="NPK (kg)">
+</div>
+
+<div class="champ">
+  <input type="number" id="uree" placeholder="Urée (kg)">
+</div>
+
+<button class="calcul" onclick="calculer()">💡 Calculer</button>
+
+<div class="resultat" id="resultat" style="display:none;">
+  <p id="totalNPK"></p>
+  <p id="totalNPKg"></p>
+  <p id="totalUree"></p>
+  <p id="totalUreeg"></p>
+</div>
+
+</main>
+
+<script>
+const engraisRecommande = {
+  tomate:{npk:150,uree:50}, gombo:{npk:120,uree:40}, haricot:{npk:80,uree:25},
+  laitue:{npk:100,uree:30}, epinard:{npk:90,uree:25}, chou:{npk:120,uree:35},
+  carotte:{npk:80,uree:25}, poivron:{npk:140,uree:45}, piment:{npk:130,uree:40},
+  concombre:{npk:120,uree:35}, courgette:{npk:110,uree:30}, aubergine:{npk:140,uree:45},
+  oignon:{npk:100,uree:30}, ail:{npk:80,uree:25}, betterave:{npk:90,uree:25},
+  radis:{npk:70,uree:20}, pois:{npk:60,uree:15}, celeri:{npk:100,uree:30},
+  persil:{npk:50,uree:15}, basilic:{npk:40,uree:10},
+  melon:{npk:160,uree:55}, pasteque:{npk:180,uree:60}, mais:{npk:200,uree:70},
+  ciboulette:{npk:40,uree:10}, coriandre:{npk:60,uree:20}
+};
+
+let mode="auto";
+
+function changerMode(m){
+  mode=m;
+  if(m==="manuel"){ npk.value=""; uree.value=""; }
+  remplirEngrais();
+}
+
+function remplirEngrais(){
+  if(mode!=="auto") return;
+  const c = culture.value;
+  let n=0,u=0;
+  if(engraisRecommande[c]){
+    n=engraisRecommande[c].npk;
+    u=engraisRecommande[c].uree;
+    if(uSurface.value==="a"){ n/=100; u/=100; }
+    if(uSurface.value==="m2"){ n/=10000; u/=10000; }
+  }
+  npk.value=n.toFixed(3);
+  uree.value=u.toFixed(3);
+}
+
+function calculer(){
+  const s=Number(surface.value);
+  let surfHa=s;
+  if(uSurface.value==="a") surfHa=s/100;
+  if(uSurface.value==="m2") surfHa=s/10000;
+
+  const n=npk.value*surfHa*10000;
+  const u=uree.value*surfHa*10000;
+
+  resultat.style.display="block";
+  totalNPK.innerText=`🌱 NPK : ${n.toFixed(2)} kg`;
+  totalNPKg.innerText=`🌱 NPK : ${(n*1000).toFixed(0)} g`;
+  totalUree.innerText=`🌱 Urée : ${u.toFixed(2)} kg`;
+  totalUreeg.innerText=`🌱 Urée : ${(u*1000).toFixed(0)} g`;
+}
+
+changerMode("auto");
+</script>
+
+</body>
+</html>

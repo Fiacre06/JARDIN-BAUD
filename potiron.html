@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culture du Potiron</title>
+
+<style>
+.back-btn{position:fixed;top:20px;left:20px;width:50px;height:50px;border-radius:50%;background:#F57C00;color:white;font-size:40px;display:flex;justify-content:center;align-items:center;box-shadow:0 8px 18px rgba(0,0,0,0.3);cursor:pointer;animation:bounce 1.6s infinite ease;z-index:1000}
+.back-btn i{font-style:normal;font-weight:bold}
+@keyframes bounce{0%{transform:translateY(0)}30%{transform:translateY(-12px)}50%{transform:translateY(0)}70%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.back-btn.rotate{animation:rotate360 0.6s linear forwards}
+@keyframes rotate360{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+body{font-family:Arial,sans-serif;background:url("potiron.jpg") no-repeat center/cover fixed;margin:0;padding:0}
+header{text-align:center;color:white;padding:80px 20px;font-size:32px;font-weight:bold;text-shadow:2px 2px 8px #000;backdrop-filter:brightness(0.5)}
+.search-box{display:flex;align-items:center;background:white;padding:5px;border-radius:10px;margin:15px 20px;max-width:900px;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
+.search-box input{border:none;outline:none;font-size:18px;flex:1}
+.search-box button{background:#F57C00;border:none;color:white;padding:10px 15px;border-radius:8px;cursor:pointer;font-size:18px}
+.horizontal-scroll{display:flex;gap:20px;overflow-x:auto;padding:20px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.horizontal-scroll::-webkit-scrollbar{display:none}
+.big-card{width:250px;height:250px;background:#ffffffcc;border-radius:18px;padding:15px;box-shadow:0 4px 12px rgba(0,0,0,0.15);flex-shrink:0;display:flex;flex-direction:column;backdrop-filter:blur(2px)}
+.card-title{text-align:center;font-size:20px;font-weight:bold;margin-bottom:10px;color:#E65100}
+.card-content{overflow-y:auto;padding-right:5px;-webkit-overflow-scrolling:touch}
+.card-content::-webkit-scrollbar{width:5px}
+.card-content::-webkit-scrollbar-thumb{background:#aaa;border-radius:10px}
+.big-card h3{margin-top:10px;font-size:16px;color:#F57C00}
+.big-card ul{list-style:none;padding-left:10px;margin:8px 0}
+.big-card li{padding:3px 0;font-size:14px;display:flex}
+.big-card li::before{content:"• ";color:#FFB74D;font-weight:bold;width:1em}
+</style>
+</head>
+
+<body>
+
+<div class="back-btn" id="backBtn"><i>←</i></div>
+
+<header>Culture du Potiron</header>
+
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Rechercher une information..." onkeyup="searchContent()">
+<button>🔍</button>
+</div>
+
+<div class="horizontal-scroll">
+
+<div class="big-card">
+<h2 class="card-title">📘 Description Générale</h2>
+<div class="card-content">
+<ul>
+<li>🌍 Origine : Amérique centrale et du Sud.</li>
+<li>🎃 Famille : Cucurbitacées.</li>
+<li>🌱 Plante annuelle rampante avec longues tiges.</li>
+<li>🥗 Fruit riche en vitamines, fibres et caroténoïdes.</li>
+<li>💰 Culture rentable en maraîchage tropical et tempéré.</li>
+<li>🌡️ Température idéale : 20–28°C.</li>
+<li>🌱 Sol : profond, fertile, bien drainé, pH 6–7.5.</li>
+</ul>
+</div>
+</div>
+
+<div class="big-card">
+<h2 class="card-title">🌱 Itinéraire Technique</h2>
+<div class="card-content">
+
+<h3>1. Préparation du sol</h3>
+<ul>
+<li>Labour et incorporation de compost ou fumier bien décomposé.</li>
+<li>Sol ameubli et riche pour favoriser racines et tiges vigoureuses.</li>
+</ul>
+
+<h3>2. Semis & Plantation</h3>
+<ul>
+<li>Semis en pépinière ou direct selon climat.</li>
+<li>Espacement : 120–150 cm entre lignes, 80–100 cm entre plants.</li>
+<li>Éclaircissage pour ne garder que les plants vigoureux.</li>
+<li>Arrosage régulier après plantation pour éviter stress hydrique.</li>
+</ul>
+
+<h3>3. Irrigation</h3>
+<ul>
+<li>Maintenir sol humide mais non saturé pour éviter pourriture.</li>
+<li>Stress hydrique → fruits mal formés et amers.</li>
+</ul>
+
+<h3>4. Fertilisation</h3>
+<ul>
+<li>Forte exigence en potassium et phosphore pour fructification.</li>
+<li>Azote modéré pour croissance végétative.</li>
+<li>Apports organiques pour sol vivant et fertilité durable.</li>
+</ul>
+
+<h3>5. Récolte</h3>
+<ul>
+<li>90–120 jours après semis selon variété.</li>
+<li>Récolter fruits à maturité complète mais avant gel.</li>
+</ul>
+
+</div>
+</div>
+
+<div class="big-card">
+<h2 class="card-title">⏳ Cycle & Durée</h2>
+<div class="card-content">
+<ul>
+<li>🌱 Germination : 7–12 jours.</li>
+<li>🌿 Croissance végétative : 30–40 jours.</li>
+<li>🌸 Floraison : 35–50 jours.</li>
+<li>🎃 Récolte : 90–120 jours selon variété.</li>
+</ul>
+</div>
+</div>
+
+<div class="big-card">
+<h2 class="card-title">⚠️ Maladies & Ravageurs</h2>
+<div class="card-content">
+
+<h3>🍄 Maladies</h3>
+<p><strong>Mildiou (Pseudoperonospora cubensis)</strong></p>
+<ul>
+<li>Signes : taches jaunes sur feuilles, feutrage gris sous feuilles, chute précoce du feuillage.</li>
+</ul>
+
+<p><strong>Oïdium</strong></p>
+<ul>
+<li>Signes : poudre blanche sur feuilles et tiges, retard de croissance.</li>
+</ul>
+
+<p><strong>Anthracnose (Colletotrichum spp.)</strong></p>
+<ul>
+<li>Signes : taches brunes sur feuilles et fruits, pourriture possible.</li>
+</ul>
+
+<h3>🦟 Ravageurs</h3>
+<p><strong>Pucerons</strong></p>
+<ul>
+<li>Signes : feuilles enroulées, miellat, transmission virus.</li>
+</ul>
+
+<p><strong>Altises</strong></p>
+<ul>
+<li>Signes : petits trous ronds sur feuilles, ralentissement croissance.</li>
+</ul>
+
+<p><strong>Thrips</strong></p>
+<ul>
+<li>Signes : feuilles argentées, fleurs avortées.</li>
+</ul>
+
+<p><strong>Chenilles</strong></p>
+<ul>
+<li>Signes : feuilles et jeunes tiges dévorées, fruits abîmés.</li>
+</ul>
+
+</div>
+</div>
+
+<div class="big-card">
+<h2 class="card-title">💡 Bonnes Pratiques</h2>
+<div class="card-content">
+<ul>
+<li>Rotation culturale 2–3 ans avec légumineuses.</li>
+<li>Paillage pour conserver humidité et limiter maladies.</li>
+<li>Éliminer feuilles et fruits malades.</li>
+<li>Semis successifs pour production continue.</li>
+<li>Variétés adaptées au climat local.</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<script>
+function searchContent(){
+let filter=document.getElementById("searchInput").value.toLowerCase();
+document.querySelectorAll(".big-card").forEach(card=>{
+card.style.display=card.innerText.toLowerCase().includes(filter)?"flex":"none";
+});
+}
+document.getElementById("backBtn").addEventListener("click",function(){
+const btn=this;
+btn.classList.add("rotate");
+setTimeout(()=>btn.classList.remove("rotate"),600);
+setTimeout(()=>{window.location.href="index.html"},300);
+});
+</script>
+
+</body>
+</html>

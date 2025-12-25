@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>AgroSoin – Masonry Animé</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #e0f2f1;
+  color: #333;
+}
+  /*Bouton flottant retour */
+.back-btn{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: bounce 1.6s infinite ease;
+    z-index: 1000;
+}
+.back-btn i { font-style: normal; font-weight: bold; }
+@keyframes bounce {
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-12px)}
+    50%{transform:translateY(0)}
+    70%{transform:translateY(-6px)}
+    100%{transform:translateY(0)}
+}
+.back-btn.rotate{ animation:rotate360 0.6s linear forwards; }
+@keyframes rotate360{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+header {
+  background: #2e7d32;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Top Buttons */
+.top-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.top-buttons button {
+  flex: 1 1 45%;
+  max-width: 180px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  background: #2e7d32;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.top-buttons button.active, .top-buttons button:hover {
+  background: #1b4d23;
+  transform: scale(1.05);
+}
+
+/* Search */
+.search {
+  position: relative;
+  padding: 0 15px 15px 15px;
+}
+.search input {
+  width: 270px;
+  padding: 10px 35px 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+}
+.search input:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 8px rgba(46,125,50,0.5);
+}
+
+/* Submenu */
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  background: #f1f1f1;
+  margin: 0 15px 15px 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+.submenu.show {
+  opacity: 1;
+}
+.submenu button {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  background: white;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+.submenu button:last-child { border-bottom: none; }
+.submenu button:hover, .submenu button.active {
+  background: #2e7d32;
+  color: white;
+  transform: translateX(8px);
+}
+
+/* Masonry Grid */
+#resultats {
+  column-count: 2;
+  column-gap: 12px;
+  padding: 10px 15px 30px 15px;
+}
+@media(max-width:500px){ #resultats { column-count:2; } }
+
+/* Card */
+.card {
+  display: inline-block;
+  background: transparent;
+  width: 100%;
+  height:170px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  overflow: hidden;
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.4s, box-shadow 0.4s;
+  position: relative;
+}
+.card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+.card h3 {
+  font-size: 14px;
+  padding: 10px;
+  margin: 0;
+  font-weight: bold;
+  color: white;
+}
+.card::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,0.6);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity:0.7; }
+  50% { transform: scale(1.3); opacity:1; }
+  100% { transform: scale(1); opacity:0.7; }
+}
+.card:hover { transform: translateY(-8px) rotate(-1deg) scale(1.03); box-shadow: 0 12px 22px rgba(0,0,0,0.25); }
+.card:hover img { transform: scale(1.08); }
+
+/* Category Colors */
+.card.Fongique { background: #4CAF50; }
+.card.Bactérienne { background: #4CAF50; }
+.card.Virale { background: #4CAF50; }
+.card.Nématode { background: #4CAF50;}
+.card.Physiologique { background: #4CAF50; }
+.card.Insecte { background: #4CAF50; }
+.card.Acarien { background: #4CAF50; }
+.card.Mollusque { background: #4CAF50; }
+.card.NématodeRavageur { background: #4CAF50; }
+
+/* Animations des cartes au chargement */
+.card { transform: translateY(20px); opacity: 0; transition: transform 0.5s ease, opacity 0.5s ease; }
+.card.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+  <div class="back-btn" id="backBtn"><i>←</i></div>
+
+<header>🌱 JardinExpress – Maladies & Ravageurs Maraîchers</header>
+
+<div class="top-buttons">
+  <button id="btnMaladie" class="active" onclick="toggleMenu('maladiesMenu', this)"><i class="fas fa-virus"></i>Maladies</button>
+  <button id="btnRavageur" onclick="toggleMenu('ravageursMenu', this)"><i class="fas fa-bug"></i>Ravageurs</button>
+</div>
+
+<div class="search">
+  <input type="text" id="search" placeholder="Rechercher une maladie ou un ravageur...">
+  
+</div>
+
+<div class="submenu" id="maladiesMenu">
+  <button onclick="selectCategory('Maladie','Fongique')"><i class="fas fa-seedling"></i>Fongiques</button>
+  <button onclick="selectCategory('Maladie','Bactérienne')"><i class="fas fa-virus"></i>Bactériennes</button>
+  <button onclick="selectCategory('Maladie','Virale')"><i class="fas fa-dna"></i>Virales</button>
+  <button onclick="selectCategory('Maladie','Nématode')"><i class="fas fa-bug"></i>Nématodes</button>
+  <button onclick="selectCategory('Maladie','Physiologique')"><i class="fas fa-leaf"></i>Physiologiques</button>
+</div>
+
+<div class="submenu" id="ravageursMenu">
+  <button onclick="selectCategory('Ravageur','Insecte')"><i class="fas fa-bug"></i>Insectes</button>
+  <button onclick="selectCategory('Ravageur','Acarien')"><i class="fas fa-spider"></i>Acariens</button>
+  <button onclick="selectCategory('Ravageur','Nématode')"><i class="fas fa-bug"></i>Nématodes</button>
+  <button onclick="selectCategory('Ravageur','Mollusque')"><i class="fas fa-otter"></i>Mollusques</button>
+</div>
+
+<div id="resultats"></div>
+
+<script>
+const data = [
+  /* -------------------- Maladies Fongiques -------------------- */
+  { nom: "Mildiou", type: "Maladie", categorie: "Fongique", image: "img/mildiou.jpg", page: "mildiou.html" },
+  { nom: "Oïdium", type: "Maladie", categorie: "Fongique", image: "img/oidium.jpg", page: "oidium.html" },
+  { nom: "Alternariose", type: "Maladie", categorie: "Fongique", image: "img/alternariose.jpg", page: "alternariose.html" },
+  { nom: "Botrytis", type: "Maladie", categorie: "Fongique", image: "img/botrytis.jpg", page: "botrytis.html" },
+
+  /* -------------------- Maladies Bactériennes -------------------- */
+  { nom: "Flétrissement bactérien", type: "Maladie", categorie: "Bactérienne", image: "img/fletrissement.jpg", page: "fletrissement.html" },
+  { nom: "Tache bactérienne", type: "Maladie", categorie: "Bactérienne", image: "img/tache_bacterienne.jpg", page: "tache_bacterienne.html" },
+  { nom: "Chancre bactérien", type: "Maladie", categorie: "Bactérienne", image: "img/chancre.jpg", page: "chancre.html" },
+  { nom: "Pourriture molle bactérienne", type: "Maladie", categorie: "Bactérienne", image: "img/pourriture_molle.jpg", page: "pourriture_molle.html" },
+
+  /* -------------------- Maladies Virales -------------------- */
+  { nom: "Mosaïque du concombre", type: "Maladie", categorie: "Virale", image: "img/mosaique_concombre.jpg", page: "mosaique_concombre.html" },
+  { nom: "Mosaïque du tabac", type: "Maladie", categorie: "Virale", image: "img/mosaique_tabac.jpg", page: "mosaique_tabac.html" },
+  { nom: "Mosaïque du melon", type: "Maladie", categorie: "Virale", image: "img/mosaique_melon.jpg", page: "mosaique_melon.html" },
+  { nom: "Virus feuille en mosaïque", type: "Maladie", categorie: "Virale", image: "img/virus_mosaique.jpg", page: "virus_feuille.html" },
+
+  /* -------------------- Maladies Nématodes -------------------- */
+  { nom: "Nématodes galligènes", type: "Maladie", categorie: "Nématode", image: "img/nematodes_galligene.jpg", page: "nematodes_galligene.html" },
+  { nom: "Nématodes racinaires", type: "Maladie", categorie: "Nématode", image: "img/nematodes_racinaires.jpg", page: "nematodes_racinaires.html" },
+  { nom: "Nématodes cécidogènes", type: "Maladie", categorie: "Nématode", image: "img/nematodes_cecidogene.jpg", page: "nematodes_cecidogenes.html" },
+  { nom: "Nématodes à kystes", type: "Maladie", categorie: "Nématode", image: "img/nematodes_kystes.jpg", page: "nematodes_kystes.html" },
+
+  /* -------------------- Maladies Physiologiques -------------------- */
+  { nom: "Carence en calcium", type: "Maladie", categorie: "Physiologique", image: "img/calcium.jpg", page: "carence_calcium.html" },
+  { nom: "Carence en azote", type: "Maladie", categorie: "Physiologique", image: "img/carence_azote.jpg", page: "carence_azote.html" },
+  { nom: "Carence en potassium", type: "Maladie", categorie: "Physiologique", image: "img/potassium.jpg", page: "carence_potassium.html" },
+  { nom: "Excès d’eau / pourriture racinaire", type: "Maladie", categorie: "Physiologique", image: "img/exces_eau.jpg", page: "exces_eau.html" },
+
+  /* -------------------- Ravageurs Insectes -------------------- */
+  { nom: "Pucerons", type: "Ravageur", categorie: "Insecte", image: "img/pucerons.jpg", page: "pucerons.html" },
+  { nom: "Thrips", type: "Ravageur", categorie: "Insecte", image: "img/thrips.jpg", page: "thrips.html" },
+  { nom: "Mouche blanche", type: "Ravageur", categorie: "Insecte", image: "img/mouche_blanche.jpg", page: "mouche_blanche.html" },
+  { nom: "Mineuse des feuilles", type: "Ravageur", categorie: "Insecte", image: "img/mineuse.jpg", page: "mineuse.html" },
+
+  /* -------------------- Ravageurs Acariens -------------------- */
+  { nom: "Araignée rouge", type: "Ravageur", categorie: "Acarien", image: "img/araignee_rouge.jpg", page: "araignee_rouge.html" },
+  { nom: "Tétranyque", type: "Ravageur", categorie: "Acarien", image: "img/tetranyque.jpg", page: "tetranyque.html" },
+  { nom: "Acarien jaune", type: "Ravageur", categorie: "Acarien", image: "img/acarien_jaune.jpg", page: "acarien_jaune.html" },
+  { nom: "Acarien de la vigne", type: "Ravageur", categorie: "Acarien", image: "img/acarien_vigne.jpg", page: "acarien_vigne.html" },
+
+  /* -------------------- Ravageurs Nématodes -------------------- */
+  { nom: "Nématodes galligènes", type: "Ravageur", categorie: "Nématode", image: "img/nematodes_ravageur.jpg", page: "nematodes_ravageur.html" },
+  { nom: "Nématodes racinaires", type: "Ravageur", categorie: "Nématode", image: "img/nematodes_racinaires_ravageur.jpg", page: "nematodes_racinaires_ravageur.html" },
+  { nom: "Nématodes à kystes", type: "Ravageur", categorie: "Nématode", image: "img/nematodes_kystes.jpg", page: "nematodes_kystes.html" },
+  { nom: "Nématodes cécidogènes", type: "Ravageur", categorie: "Nématode", image: "img/nematodes_cecidogenes_ravageur.jpg", page: "nematodes_cecidogenes_ravageur.html" },
+
+  /* -------------------- Ravageurs Mollusques -------------------- */
+  { nom: "Limaces", type: "Ravageur", categorie: "Mollusque", image: "img/limaces.jpg", page: "limaces.html" },
+  { nom: "Escargots", type: "Ravageur", categorie: "Mollusque", image: "img/escargots.jpg", page: "escargots.html" },
+  { nom: "Limanaires", type: "Ravageur", categorie: "Mollusque", image: "img/limanaires.jpg", page: "limanaires.html" },
+  { nom: "Pomace", type: "Ravageur", categorie: "Mollusque", image: "img/pomace.jpg", page: "pomace.html" }
+];
+
+let currentType = "Maladie";
+let currentCategory = "";
+
+function toggleMenu(menuId, btn) {
+  document.querySelectorAll(".submenu").forEach(m => { if(m.id !== menuId) closeMenu(m); });
+  const menu = document.getElementById(menuId);
+  if(menu.style.maxHeight && menu.style.maxHeight !== "0px"){ closeMenu(menu); } 
+  else { openMenu(menu); }
+  document.querySelectorAll('.top-buttons button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function openMenu(menu) { menu.style.display="block"; menu.style.maxHeight = menu.scrollHeight+"px"; menu.classList.add("show"); }
+function closeMenu(menu) { menu.style.maxHeight="0"; menu.classList.remove("show"); setTimeout(()=>{menu.style.display="none";},500); }
+
+function selectCategory(type, categorie){
+  currentType = type; currentCategory = categorie;
+  document.querySelectorAll(".submenu").forEach(m => closeMenu(m));
+  const searchText = document.getElementById("search").value.toLowerCase();
+  const zone = document.getElementById("resultats");
+  zone.innerHTML = "";
+  data.filter(d=>d.type===type && d.categorie===categorie)
+      .filter(d=>d.nom.toLowerCase().includes(searchText))
+      .forEach(d=>{
+        const a=document.createElement("a");
+        a.href=d.page;
+        a.className = "card " + (d.type==="Ravageur" && d.categorie==="Nématode"?"NématodeRavageur":d.categorie);
+        a.innerHTML=`<img src="${d.image}"><h3>${d.nom}</h3>`;
+        zone.appendChild(a);
+        setTimeout(()=>a.classList.add("show"),50);
+      });
+}
+
+document.getElementById("search").addEventListener("input",()=>{
+  if(!currentCategory) return;
+  selectCategory(currentType,currentCategory);
+});
+ document.getElementById("backBtn").addEventListener("click", function(){
+    const btn = this;
+    btn.classList.add("rotate");
+    setTimeout(()=>btn.classList.remove("rotate"), 600);
+    setTimeout(()=>{ window.location.href="index.html"; }, 300);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>JardinExpress – Calendrier Agricole</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- FULLCALENDAR -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<style>
+:root{
+  --green:#4caf50;
+  --water:#2196f3;
+  --fert:#8bc34a;
+  --harvest:#ff9800;
+  --maint:#9c27b0;
+}
+
+body{
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; /* on gère le scroll horizontal plus tard */
+}
+  /*Bouton flottant retour */
+.back-btn{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: bounce 1.6s infinite ease;
+    z-index: 1000;
+}
+.back-btn i { font-style: normal; font-weight: bold; }
+@keyframes bounce {
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-12px)}
+    50%{transform:translateY(0)}
+    70%{transform:translateY(-6px)}
+    100%{transform:translateY(0)}
+}
+.back-btn.rotate{ animation:rotate360 0.6s linear forwards; }
+@keyframes rotate360{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+
+/* ===============================
+   HEADER
+================================ */
+header{
+  background: url('calendrier.jpg');
+  color: #fff;
+  padding: 12px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* 🌱 Barre boutons culture horizontale */
+#plantButtonsContainer{
+  display: flex;
+  overflow-x: auto;
+  padding: 5px;
+  gap: 10px;
+  background: #fff;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+.plant-button-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+#plantButtonsContainer button{
+  display: flex;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: var(--green);
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#plantButtonsContainer button:hover{
+  background: #388e3c;
+}
+
+.plant-month{
+  font-size: 12px;
+  color: #333;
+  margin-top: 2px;
+}
+
+/* ===============================
+   CONTROLES DATE ET BOUTONS
+================================ */
+.controls{
+  background: #fff;
+  padding: 5px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  margin: 0px 10px 10px 10px;
+  cursor: pointer;
+}
+
+.controls input,
+.controls button{
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.controls button{
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+}
+
+.controls button:hover{
+  opacity: 0.9;
+}
+
+
+/* ===============================
+   BANDE HORIZONTALE CALENDRIER + TÂCHES
+   Scroll horizontal
+================================ */
+#mainContent{
+  flex: 1;
+  margin: 0 10px 10px 10px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  overflow-x: auto;  /* scroll horizontal */
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+}
+
+/* Panneaux calendrier et tâches */
+#calendar, .tasks{
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  transition: all 0.3s ease-in-out;
+}
+
+/* ===============================
+   CALENDRIER
+================================ */
+#calendar {
+  width: 300px;       /* largeur de base */
+  height: 100%;
+  border-radius: 22px;
+  padding: 10px;
+  background: url('calendrier.jpg');
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  overflow: auto;
+}
+    /* ===============================
+   EN-TÊTES JOURS COMPACTES (cartes)
+================================ */
+.fc-col-header-cell-cushion {
+  background: #fff;           /* couleur de fond de la carte */
+  color: #333;                /* texte */
+  padding: 6px 12px;          /* taille de la carte */
+  border-radius: 10px;        /* arrondi */
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25); /* ombre */
+  margin: 4px;                /* espace autour */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.fc-col-header-cell-cushion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+    
+    /* Supprimer toutes les bordures du calendrier */
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-scrollgrid,
+.fc-scrollgrid table {
+    border: none !important;
+    background: transparent !important; /* si tu veux supprimer le fond des cellules aussi */
+}
+
+/* Supprimer la bordure de séparation des jours */
+.fc-daygrid-day-frame {
+    border: none !important;
+    background: #fff; /* ou la couleur de ton choix pour les cartes */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25); /* garde l'effet "carte" */
+}
+
+/* Cartes des jours compactes */
+.fc-daygrid-day-frame {
+  background: #fff;
+  border-radius: 10px;    
+  height: 90px;
+  width: 35px;  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.fc-daygrid-day-frame:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+}
+
+/* Numéros des jours réduits */
+.fc-daygrid-day-number {
+  font-size: 10px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0;
+}
+
+/* Conteneur mini-tâches */
+.fc-daygrid-day-events {
+  margin-top: -2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  max-height: 54px;
+}
+
+/* Mini-tâches / badges */
+.fc-event {
+  border-radius: 4px !important;
+  font-size: 7px !important;
+  font-weight: 600;
+  color: #fff !important;
+  padding: 0px !important;
+  width: 30px !important;
+  height: 20px;
+  margin-bottom: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.fc-event:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+}
+
+/* Couleurs dynamiques selon type de tâche */
+.fc-event[style*="var(--green)"] { background: #4caf50; }
+.fc-event[style*="var(--water)"] { background: #2196f3; }
+.fc-event[style*="var(--fert)"] { background: #8bc34a; }
+.fc-event[style*="var(--harvest)"] { background: #ff9800; }
+.fc-event[style*="var(--maint)"] { background: #9c27b0; }
+
+/* ===============================
+   LISTE DES TÂCHES
+================================ */
+.tasks{
+  min-width: 40vw; /* largeur de base */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden; /* plus de scroll vertical */
+  border-radius: 22px;
+  padding: 0;
+  background: url('calendrier.jpg');
+}
+
+/* Titre fixe */
+.tasks h3 {
+  position: sticky;
+  top: 0;
+  background: transparent;
+  color: #fff;
+  margin: 0;
+  padding: 10px;
+  font-size: 16px;
+  z-index: 10;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Conteneur tâches */
+#taskContainer{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* Carte tâche */
+.task-item{
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  height: 100px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  font-size: 13px;
+  gap: 8px;
+}
+
+/* Badge couleur */
+.task-badge{
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 11px;
+  flex-shrink: 0;
+  white-space: nowrap;
+
+}
+    /* Boutons de sauvegarde */
+#savedButtonsContainer button {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4caf50; /* vert */
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.3s;
+}
+
+#savedButtonsContainer button:hover {
+    background: #388e3c; /* vert plus foncé au survol */
+}
+    
+    /* POPUP TASK STYLE */
+.event-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(145deg, #a5d6a7, #66bb6a); /* dégradé vert */
+    color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+    display: none;
+    max-width: 350px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    animation: popupFade 0.3s ease;
+}
+
+.event-popup h3 {
+    margin-top: 0;
+    font-size: 18px;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.event-popup p {
+    font-size: 14px;
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.event-popup button {
+    margin-top: 12px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #2e7d32;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.event-popup button:hover {
+    background: #1b5e20;
+}
+
+/* Animation apparition */
+@keyframes popupFade {
+    0% { transform: translate(-50%, -60%) scale(0.8); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+    
+</style>
+</head>
+<body>
+  <div class="back-btn" id="backBtn"><i>←</i></div>
+<header>🌱 JardinExpress – Calendrier agricole</header>
+
+<!-- 🔘 Boutons de culture en haut -->
+<div id="plantButtonsContainer"></div>
+
+<div class="controls">
+<input type="date" id="cultureSemis">
+<button id="btnGen">📅 Générer calendrier</button>
+<button id="btnClear">🗑 Effacer une sauvegarde</button>
+</div>
+
+<div id="mainContent">
+<div id="calendar"></div>
+<div class="tasks">
+<h3>📋 Tâches agricoles</h3>
+<div id="taskContainer"></div>
+</div>
+</div>
+
+<div id="savedButtonsContainer"></div>
+
+<script>
+(function(){
+
+/* 🌾 BASE DE DONNÉES SIMPLIFIÉE AVEC DURÉE ET DESCRIPTION */
+const plantDB={
+Tomate:{
+nursery:true,
+duration:"70 j",
+tasks:[
+{day:-10,title:"Préparation du sol",color:"#795548", description:"Retirer les mauvaises herbes, ameublir la terre et ajouter du compost."},
+{day:0,title:"Semis en pépinière",color:"var(--green)", description:"Semer les graines en pépinière ou en godets à l’intérieur."},
+{day:25,title:"Repiquage",color:"#3f51b5", description:"Transplanter les plantules dans le champ en espaçant correctement."},
+{day:30,title:"Fertilisation 1",color:"var(--fert)", description:"Appliquer le premier engrais organique ou minéral selon le sol."},
+{day:35,title:"Traitement préventif",color:"#ff7043", description:"Vérifier la présence de maladies et appliquer un traitement si nécessaire."},
+{day:45,title:"Tuteurage",color:"#9c27b0", description:"Installer des tuteurs pour soutenir les plants."},
+{day:60,title:"Fertilisation 2",color:"var(--fert)", description:"Deuxième apport d’engrais pour booster la croissance."},
+{day:70,title:"Début récolte",color:"var(--harvest)", description:"Récolter les tomates mûres."},
+{day:10,title:"Binage 1",color:"#9e9e9e", description:"Aérer le sol autour des plants."},
+{day:25,title:"Binage 2",color:"#9e9e9e", description:"Deuxième binage pour limiter les mauvaises herbes."},
+{day:40,title:"Binage 3",color:"#9e9e9e", description:"Troisième binage et contrôle des adventices."}
+],
+harvestDay:70
+},
+
+Gombo:{
+nursery:false,
+duration:"65 j",
+tasks:[
+{day:-7,title:"Préparation du sol",color:"#795548", description:"Labourer et enrichir le sol avec du compost ou fumier."},
+{day:0,title:"Semis",color:"var(--green)", description:"Semer directement en ligne ou en poquets."},
+{day:20,title:"Fertilisation 1",color:"var(--fert)", description:"Appliquer engrais selon le sol."},
+{day:35,title:"Traitement préventif",color:"#ff7043", description:"Surveiller les maladies et appliquer un traitement si besoin."},
+{day:50,title:"Fertilisation 2",color:"var(--fert)", description:"Deuxième apport d’engrais."},
+{day:65,title:"Début récolte",color:"var(--harvest)", description:"Récolter les gombos bien formés."},
+{day:10,title:"Binage 1",color:"#9e9e9e", description:"Aérer le sol autour des plants."},
+{day:25,title:"Binage 2",color:"#9e9e9e", description:"Deuxième binage pour limiter les mauvaises herbes."},
+{day:40,title:"Binage 3",color:"#9e9e9e", description:"Troisième binage et contrôle des adventices."}
+],
+harvestDay:65
+},
+  
+Piment:{
+    nursery:true,
+    nurseryDays:30,
+    duration:"85 j",
+    tasks:[
+        {day:-10,title:"Préparation du sol",color:"#795548", description:"Labourer et enrichir le sol avec du compost ou fumier."},
+        {day:0,title:"Semis en pépinière",color:"var(--green)", description:"Semer les graines en pépinière."},
+        {day:30,title:"Repiquage",color:"#3f51b5", description:"Transplanter les plants en pleine terre."},
+        {day:40,title:"Fertilisation 1",color:"var(--fert)", description:"Appliquer engrais selon le sol."},
+        {day:55,title:"Traitement préventif",color:"#ff7043", description:"Surveiller les maladies et appliquer un traitement si besoin."},
+        {day:70,title:"Fertilisation 2",color:"var(--fert)", description:"Deuxième apport d’engrais."},
+        {day:85,title:"Début récolte",color:"var(--harvest)", description:"Récolter les piments mûrs."},
+        {day:20,title:"Binage 1",color:"#9e9e9e", description:"Aérer le sol autour des plants."},
+        {day:45,title:"Binage 2",color:"#9e9e9e", description:"Deuxième binage pour limiter les mauvaises herbes."},
+    ],
+    harvestDay:85
+},
+
+Laitue:{
+    nursery:false,
+    duration:"60 j",
+    tasks:[
+        {day:-7,title:"Préparation du sol",color:"#795548", description:"Labourer et enrichir le sol avec du compost ou fumier."},
+        {day:0,title:"Semis",color:"var(--green)", description:"Semer directement en ligne ou en poquets."},
+        {day:15,title:"Fertilisation 1",color:"var(--fert)", description:"Appliquer engrais selon le sol."},
+        {day:30,title:"Traitement préventif",color:"#ff7043", description:"Surveiller les maladies et appliquer un traitement si besoin."},
+        {day:45,title:"Fertilisation 2",color:"var(--fert)", description:"Deuxième apport d’engrais."},
+        {day:60,title:"Début récolte",color:"var(--harvest)", description:"Récolter les laitues prèttes."},
+        {day:10,title:"Binage 1",color:"#9e9e9e", description:"Aérer le sol autour des plants."},
+        {day:25,title:"Binage 2",color:"#9e9e9e", description:"Deuxième binage pour limiter les mauvaises herbes."},
+    ],
+    harvestDay:60
+},
+
+
+// Ajouter ici Aubergine, Concombre, Chou, Laitue, Carotte, Piment… avec la même structure et description
+
+};
+
+let currentPlant=null;
+
+/* 🛠 OUTILS */
+function addDays(d,n){
+const dt=new Date(d+'T00:00:00');
+dt.setDate(dt.getDate()+n);
+return dt.toISOString().split('T')[0];
+}
+
+/* 📆 CALENDRIER */
+const calendar=new FullCalendar.Calendar(document.getElementById('calendar'),{
+locale:'fr',
+initialView:'dayGridMonth',
+height: "100%",
+expandRows: true,
+headerToolbar:{
+left:'prev,next today',
+center:'title',
+right:'dayGridMonth,listWeek'
+},
+events:[]
+});
+calendar.render();
+  // 👆 Ajouter juste après calendar.render();
+calendar.setOption('headerToolbar', false); // on supprime l'ancien header
+
+// Crée ton header personnalisé
+const calendarHeader = document.createElement('div');
+calendarHeader.style.display = 'flex';
+calendarHeader.style.justifyContent = 'space-between';
+calendarHeader.style.alignItems = 'center';
+calendarHeader.style.margin = '10px 20px';
+calendarHeader.innerHTML = `
+  <button id="prevMonth">◀</button>
+  <span id="currentMonth" style="font-weight:bold;font-size:18px;color:#fff"></span>
+  <button id="nextMonth">▶</button>
+`;
+document.getElementById('calendar').prepend(calendarHeader);
+
+// Met à jour le mois affiché
+function updateCurrentMonth() {
+    const date = calendar.getDate();
+    const options = { month: 'long', year: 'numeric' };
+    document.getElementById('currentMonth').textContent = date.toLocaleDateString('fr-FR', options);
+}
+updateCurrentMonth();
+
+// Boutons de navigation avec animation slide
+document.getElementById('prevMonth').onclick = () => {
+    calendar.prev();
+    updateCurrentMonth();
+};
+document.getElementById('nextMonth').onclick = () => {
+    calendar.next();
+    updateCurrentMonth();
+};
+
+/* 📌 POPUP */
+const popup=document.createElement("div");
+popup.className="event-popup";
+document.body.appendChild(popup);
+calendar.on("eventClick",(info)=>{
+popup.innerHTML=`
+<h3>${info.event.title}</h3>
+<p><b>Date :</b> ${info.event.startStr}</p>
+<p>${info.event.extendedProps.description || ''}</p>
+<button id="closePopup">Fermer</button>`;
+popup.style.display="block";
+document.getElementById("closePopup").onclick=()=>popup.style.display="none";
+});
+
+/* 🔘 BOUTONS HORIZONTAUX AVEC DURÉE DU CYCLE */
+const sidebar=document.getElementById('plantButtonsContainer');
+Object.keys(plantDB).forEach(p=>{
+const wrapper=document.createElement('div');
+wrapper.className="plant-button-wrapper";
+
+const btn=document.createElement('button');
+btn.textContent=p;
+btn.onclick=()=>{
+currentPlant=p;
+alert("Culture sélectionnée : "+p+"\nDurée du cycle : "+plantDB[p].duration);
+loadSavedButtons();
+};
+
+const durationLabel=document.createElement('div');
+durationLabel.className="plant-month";
+durationLabel.textContent=plantDB[p].duration;
+
+wrapper.appendChild(btn);
+wrapper.appendChild(durationLabel);
+sidebar.appendChild(wrapper);
+});
+
+/* ⚙️ GÉNÉRATION CALENDRIER */
+document.getElementById("btnGen").onclick=()=>{
+if(!currentPlant) return alert("Sélectionne une culture d'abord");
+const semis=document.getElementById("cultureSemis").value;
+if(!semis) return alert("Sélectionne la date de semis");
+
+calendar.removeAllEvents();
+const plant=plantDB[currentPlant];
+
+/* Ajout des tâches principales */
+plant.tasks.forEach(t=>{
+if(t.title==="Repiquage" && !plant.nursery) return;
+calendar.addEvent({
+title: t.title,
+start: addDays(semis, t.day),
+color: t.color,
+description: t.description
+});
+});
+
+/* Ajout arrosage quotidien */
+for(let i=0;i<=plant.harvestDay;i++){
+calendar.addEvent({
+title:"💧 Arrosage",
+start:addDays(semis,i),
+color:"var(--water)",
+description:"Arroser selon les besoins de la plante, éviter les excès."
+});
+}
+
+renderTasks();
+savePlantHistory();
+loadSavedButtons();
+};
+
+/* 🗑 SUPPRESSION DÉFINITIVE D'UNE SAUVEGARDE SPÉCIFIQUE */
+document.getElementById("btnClear").onclick = () => {
+if (!currentPlant) return alert("Sélectionne une culture avant de supprimer la sauvegarde.");
+
+let savedList = JSON.parse(localStorage.getItem("jardin_history_" + currentPlant) || "[]");
+if (savedList.length === 0) return alert("Aucune sauvegarde à supprimer pour cette culture.");
+
+let message = "Sélectionne le numéro de la sauvegarde à supprimer :\n";
+savedList.forEach((s, i) => {
+    const d = new Date(s.timestamp);
+    message += i + " : " + d.toLocaleString() + "\n";
+});
+
+const index = prompt(message);
+if (index === null) return; 
+const idx = parseInt(index);
+if (isNaN(idx) || idx < 0 || idx >= savedList.length) return alert("Numéro invalide.");
+
+savedList.splice(idx, 1);
+localStorage.setItem("jardin_history_" + currentPlant, JSON.stringify(savedList));
+
+/* ✅ NETTOYAGE IMMÉDIAT DE L’INTERFACE */
+calendar.removeAllEvents();
+renderTasks();
+
+alert("Sauvegarde supprimée définitivement !");
+loadSavedButtons();
+};
+
+/* 📋 LISTE TÂCHES – cartes sans description */
+function renderTasks(){
+    const cont=document.getElementById("taskContainer");
+    cont.innerHTML=""; // vide le conteneur
+
+    // Trie les événements par date
+    calendar.getEvents()
+    .sort((a,b)=>new Date(a.start)-new Date(b.start))
+    .forEach(e=>{
+        const div=document.createElement("div");
+        div.className="task-item";
+
+        div.innerHTML=`
+        <span class="task-badge" style="background:${e.backgroundColor}">${e.title.split(" ")[0]}</span>
+        <b>${e.startStr}</b><br>${e.title}
+        `;
+        cont.appendChild(div);
+    });
+}
+
+/* 💾 SAUVEGARDE HISTORIQUE */
+function savePlantHistory(){
+if(!currentPlant) return;
+let key="jardin_history_"+currentPlant;
+let savedList=JSON.parse(localStorage.getItem(key)||"[]");
+
+const newSave={
+timestamp:new Date().toISOString(),
+events:calendar.getEvents().map(e=>({
+title:e.title,start:e.startStr,color:e.backgroundColor,description:e.extendedProps.description
+}))
+};
+savedList.push(newSave);
+localStorage.setItem(key,JSON.stringify(savedList));
+}
+
+/* 🔘 BOUTONS DE SAUVEGARDE */
+function loadSavedButtons(){
+const container=document.getElementById("savedButtonsContainer");
+container.innerHTML="";
+if(!currentPlant) return;
+let savedList=JSON.parse(localStorage.getItem("jardin_history_"+currentPlant)||"[]");
+savedList.forEach((s,i)=>{
+const btn=document.createElement("button");
+const d=new Date(s.timestamp);
+btn.textContent="🔄 "+currentPlant+" ("+d.toLocaleString()+")";
+btn.onclick=()=>loadSavedCalendar(i);
+container.appendChild(btn);
+});
+}
+
+function loadSavedCalendar(index){
+let savedList=JSON.parse(localStorage.getItem("jardin_history_"+currentPlant)||"[]");
+if(!savedList || !savedList[index]) return;
+calendar.removeAllEvents();
+savedList[index].events.forEach(e=>{
+calendar.addEvent({title:e.title,start:e.start,color:e.color,description:e.description});
+});
+renderTasks();
+alert("Sauvegarde chargée : "+currentPlant+" ("+new Date(savedList[index].timestamp).toLocaleString()+")");
+}
+  document.getElementById("backBtn").addEventListener("click", function(){
+    const btn = this;
+    btn.classList.add("rotate");
+    setTimeout(()=>btn.classList.remove("rotate"), 600);
+    setTimeout(()=>{ window.location.href="index.html"; }, 300);
+});
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculatrice de semences | JardinExpress</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --vert: #2e7d32;
+      --vert-clair: #e8f5e9;
+      --fond: #f4f8f6;
+      --carte: #ffffff;
+      --ombre: 0 6px 18px rgba(0,0,0,0.12);
+      --btn-actif: #43a047;
+      --btn-inactif: #c8e6c9;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--fond);
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1b5e20, #43a047);
+      color: white;
+      padding: 28px 18px;
+      border-radius: 0 0 25px 25px;
+      box-shadow: var(--ombre);
+      text-align: center;
+    }
+
+    main { padding:22px 18px 30px; display:grid; gap:16px; }
+
+    .boutonsMode { display:flex; gap:10px; justify-content:center; }
+
+    .boutonsMode button {
+      flex:1; padding:12px; font-weight:bold;
+      border-radius:12px; border:none; cursor:pointer;
+    }
+
+    .champ {
+      display:flex; gap:10px;
+      background:var(--carte);
+      padding:14px;
+      border-radius:14px;
+      box-shadow:var(--ombre);
+    }
+
+    input, select {
+      font-size:15px;
+      border:none;
+      outline:none;
+      border-radius:10px;
+      padding:10px;
+    }
+
+    input { flex:2; background:transparent; }
+    select {
+      flex:1;
+      background:var(--vert-clair);
+      color:var(--vert);
+      font-weight:bold;
+    }
+
+    button.calcul {
+      margin-top:10px;
+      padding:16px;
+      font-size:16px;
+      border:none;
+      border-radius:18px;
+      background:linear-gradient(135deg,#2e7d32,#66bb6a);
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+      box-shadow:var(--ombre);
+    }
+
+    .resultat {
+      margin-top:12px;
+      background:#fff;
+      padding:18px;
+      border-radius:18px;
+      box-shadow:var(--ombre);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌾 Calculatrice de semences</h1>
+</header>
+
+<main>
+
+  <div class="boutonsMode">
+    <button id="autoBtn" onclick="changerMode('auto')">Automatique</button>
+    <button id="manuelBtn" onclick="changerMode('manuel')">Manuelle</button>
+  </div>
+
+  <!-- CULTURE -->
+  <div class="champ">
+    <select id="culture" onchange="remplirTaux()">
+      <option value="" disabled selected>Choisir la culture</option>
+      <option value="tomate">Tomate</option>
+      <option value="gombo">Gombo</option>
+      <option value="haricot">Haricot vert</option>
+      <option value="laitue">Laitue</option>
+      <option value="epinard">Épinard</option>
+      <option value="chou">Chou</option>
+      <option value="carotte">Carotte</option>
+      <option value="poivron">Poivron</option>
+      <option value="piment">Piment</option>
+      <option value="concombre">Concombre</option>
+      <option value="courgette">Courgette</option>
+      <option value="aubergine">Aubergine</option>
+      <option value="oignon">Oignon</option>
+      <option value="ail">Ail</option>
+      <option value="betterave">Betterave</option>
+      <option value="radis">Radis</option>
+      <option value="pois">Pois</option>
+      <option value="celeri">Céleri</option>
+      <option value="persil">Persil</option>
+      <option value="basilic">Basilic</option>
+      <option value="melon">Melon</option>
+      <option value="pasteque">Pastèque</option>
+      <option value="mais">Maïs doux</option>
+      <option value="ciboulette">Ciboulette</option>
+      <option value="coriandre">Coriandre</option>
+    </select>
+  </div>
+
+  <!-- SURFACE -->
+  <div class="champ">
+    <input type="number" id="surface" placeholder="Surface à semer">
+    <select id="uSurface">
+      <option value="ha">ha</option>
+      <option value="a">are</option>
+      <option value="m2">m²</option>
+    </select>
+  </div>
+
+  <!-- TAUX -->
+  <div class="champ">
+    <input type="number" id="taux" placeholder="Taux de semis">
+    <select id="uTaux">
+      <option value="kg_ha">kg/ha</option>
+      <option value="g_m2">g/m²</option>
+    </select>
+  </div>
+
+  <button class="calcul" onclick="calculer()">🌱 Calculer</button>
+
+  <div class="resultat" id="resultat" style="display:none;">
+    <p id="quantite"></p>
+    <p id="quantiteGraine"></p>
+  </div>
+
+</main>
+
+<script>
+const tauxSemis = {
+  tomate:2.5, gombo:10, haricot:60, laitue:1.5, epinard:3,
+  chou:2, carotte:1.5, poivron:2, piment:1.5, concombre:2,
+  courgette:2, aubergine:2, oignon:2.5, ail:2, betterave:1.5,
+  radis:1.5, pois:60, celeri:2, persil:0.5, basilic:0.5,
+  melon:2, pasteque:3, mais:25, ciboulette:1, coriandre:8
+};
+
+let mode = "auto";
+
+function changerMode(m){
+  mode = m;
+  document.getElementById("taux").value = "";
+  remplirTaux();
+}
+
+function remplirTaux(){
+  if(mode==="auto"){
+    const c = culture.value;
+    if(tauxSemis[c]) taux.value = tauxSemis[c];
+  }
+}
+
+function calculer(){
+  let s = parseFloat(surface.value);
+  let t = parseFloat(taux.value);
+  if(!s || !t) return alert("Données manquantes");
+
+  if(uSurface.value==="ha") s*=10000;
+  if(uSurface.value==="a") s*=100;
+
+  if(uTaux.value==="kg_ha") t*=0.1;
+
+  const q = s*t;
+  resultat.style.display="block";
+  quantite.innerText = `Quantité : ${q.toFixed(2)} g (${(q/1000).toFixed(2)} kg)`;
+  quantiteGraine.innerText = `≈ ${Math.round(q/0.1).toLocaleString()} graines`;
+}
+
+changerMode("auto");
+</script>
+
+</body>
+</html>

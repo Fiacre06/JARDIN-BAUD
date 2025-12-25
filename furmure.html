@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fumure organique | JardinExpress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --vert:#2e7d32;
+  --clair:#e8f5e9;
+  --fond:#f4f8f6;
+  --carte:#ffffff;
+  --ombre:0 6px 18px rgba(0,0,0,0.12);
+  --actif:#43a047;
+  --inactif:#c8e6c9;
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  background:var(--fond);
+  color:#333;
+}
+
+header{
+  background:linear-gradient(135deg,#1b5e20,#43a047);
+  color:white;
+  padding:28px 18px;
+  text-align:center;
+  border-radius:0 0 25px 25px;
+  box-shadow:var(--ombre);
+}
+
+header h1{margin:0;font-size:24px;}
+header p{margin-top:8px;font-size:14px;opacity:0.95;}
+
+main{
+  padding:22px;
+  display:grid;
+  gap:16px;
+}
+
+.mode{
+  display:flex;
+  gap:10px;
+}
+
+.mode button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.champ{
+  background:var(--carte);
+  padding:14px;
+  border-radius:14px;
+  box-shadow:var(--ombre);
+  display:flex;
+  gap:10px;
+}
+
+input,select{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  font-size:15px;
+}
+
+select{background:var(--clair);}
+
+.calcul{
+  padding:16px;
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(135deg,#2e7d32,#66bb6a);
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:var(--ombre);
+}
+
+.resultat{
+  background:linear-gradient(135deg,#ffffff,#f1f8e9);
+  padding:18px;
+  border-radius:18px;
+  box-shadow:var(--ombre);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>♻️ Fumure organique</h1>
+</header>
+
+<main>
+
+<!-- MODE -->
+<div class="mode">
+  <button id="autoBtn" onclick="changerMode('auto')">Automatique</button>
+  <button id="manuelBtn" onclick="changerMode('manuel')">Manuel</button>
+</div>
+
+<!-- CULTURE (AUTO SEULEMENT) -->
+<div class="champ" id="blocCulture">
+  <select id="culture" onchange="remplirFumure()">
+    <option value="" disabled selected>Choisir la culture</option>
+    <option value="tomate">Tomate</option>
+    <option value="gombo">Gombo</option>
+    <option value="chou">Chou</option>
+    <option value="laitue">Laitue</option>
+    <option value="carotte">Carotte</option>
+    <option value="oignon">Oignon</option>
+    <option value="ail">Ail</option>
+    <option value="piment">Piment</option>
+    <option value="poivron">Poivron</option>
+    <option value="concombre">Concombre</option>
+    <option value="courgette">Courgette</option>
+    <option value="aubergine">Aubergine</option>
+    <option value="haricot">Haricot vert</option>
+    <option value="pois">Pois maraîcher</option>
+    <option value="epinard">Épinard</option>
+    <option value="betterave">Betterave</option>
+    <option value="radis">Radis</option>
+    <option value="celeri">Céleri</option>
+    <option value="persil">Persil</option>
+    <option value="basilic">Basilic</option>
+    <option value="corete">Corète (Crincrin)</option>
+    <option value="amarante">Amarante</option>
+    <option value="morelle">Morelle noire</option>
+    <option value="ciboulette">Ciboulette</option>
+    <option value="fenouil">Fenouil</option>
+  </select>
+</div>
+
+<!-- SURFACE -->
+<div class="champ">
+  <input type="number" id="surface" placeholder="Surface à fertiliser">
+  <select id="uSurface">
+    <option value="ha">ha</option>
+    <option value="a">are</option>
+    <option value="m2">m²</option>
+  </select>
+</div>
+
+<!-- TAUX -->
+<div class="champ">
+  <input type="number" id="taux" placeholder="Taux de fumure">
+  <select id="uTaux">
+    <option value="kg_ha">kg/ha</option>
+    <option value="g_m2">g/m²</option>
+  </select>
+</div>
+
+<button class="calcul" onclick="calculer()">♻️ Calculer</button>
+
+<div class="resultat" id="resultat" style="display:none;">
+  <p id="res1"></p>
+  <p id="res2"></p>
+</div>
+
+</main>
+
+<script>
+// Taux recommandés (kg/ha)
+const fumureAuto={
+  tomate:5000, gombo:3000, chou:4000, laitue:2500, carotte:2500,
+  oignon:2500, ail:2000, piment:3000, poivron:4000, concombre:3500,
+  courgette:3000, aubergine:4000, haricot:2000, pois:2000, epinard:2000,
+  betterave:2500, radis:2000, celeri:2500, persil:1500, basilic:1000,
+  corete:3000, amarante:2500, morelle:3000, ciboulette:1500, fenouil:2500
+};
+
+let mode="auto";
+
+function changerMode(m){
+  mode=m;
+  document.getElementById("blocCulture").style.display =
+    (mode==="auto")?"flex":"none";
+
+  document.getElementById("taux").value="";
+}
+
+function remplirFumure(){
+  if(mode!=="auto") return;
+  const c=document.getElementById("culture").value;
+  if(fumureAuto[c]){
+    document.getElementById("taux").value=fumureAuto[c];
+    document.getElementById("uTaux").value="kg_ha";
+  }
+}
+
+function calculer(){
+  const surfaceVal=parseFloat(surface.value);
+  const tauxVal=parseFloat(taux.value);
+  if(!surfaceVal||!tauxVal){
+    alert("Veuillez remplir surface et taux");
+    return;
+  }
+
+  let surfaceM2=
+    uSurface.value==="ha"?surfaceVal*10000:
+    uSurface.value==="a"?surfaceVal*100:surfaceVal;
+
+  let tauxGm2=
+    uTaux.value==="kg_ha"?tauxVal*0.1:tauxVal;
+
+  const totalG=surfaceM2*tauxGm2;
+
+  resultat.style.display="block";
+  res1.innerText=`✅ Quantité : ${totalG.toFixed(2)} g`;
+  res2.innerText=`📦 ${(totalG/1000).toFixed(2)} kg | ${(totalG/1e6).toFixed(2)} t`;
+}
+
+changerMode("auto");
+</script>
+
+</body>
+</html>

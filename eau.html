@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Besoin en eau | JardinExpress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --vert:#2e7d32;
+  --clair:#e8f5e9;
+  --fond:#f4f8f6;
+  --carte:#ffffff;
+  --ombre:0 6px 18px rgba(0,0,0,0.12);
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  background:var(--fond);
+}
+
+header{
+  background:linear-gradient(135deg,#1b5e20,#43a047);
+  color:#fff;
+  padding:28px 18px;
+  border-radius:0 0 25px 25px;
+  text-align:center;
+  box-shadow:var(--ombre);
+}
+
+main{
+  padding:22px;
+  display:grid;
+  gap:16px;
+}
+
+.champ{
+  background:var(--carte);
+  padding:14px;
+  border-radius:14px;
+  box-shadow:var(--ombre);
+  display:flex;
+  gap:10px;
+}
+
+input, select{
+  flex:1;
+  padding:10px;
+  font-size:15px;
+  border:none;
+  border-radius:10px;
+}
+
+select{ background:var(--clair); }
+
+.mode{
+  display:flex;
+  gap:10px;
+}
+
+.mode button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.calcul{
+  padding:16px;
+  font-size:16px;
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(135deg,#2e7d32,#66bb6a);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:var(--ombre);
+}
+
+.resultat{
+  background:linear-gradient(135deg,#ffffff,#f1f8e9);
+  padding:18px;
+  border-radius:18px;
+  box-shadow:var(--ombre);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>💧 Besoin en eau</h1>
+</header>
+
+<main>
+
+<!-- MODE -->
+<div class="mode">
+  <button onclick="changerMode('auto')" id="autoBtn">Automatique</button>
+  <button onclick="changerMode('manuel')" id="manuelBtn">Manuel</button>
+</div>
+
+<!-- CULTURE -->
+<div class="champ" id="blocCulture">
+  <select id="culture" onchange="remplirAuto()">
+    <option value="" disabled selected>Choisir la culture</option>
+    <option value="tomate">Tomate</option>
+    <option value="gombo">Gombo</option>
+    <option value="haricot">Haricot vert</option>
+    <option value="laitue">Laitue</option>
+    <option value="epinard">Épinard</option>
+    <option value="chou">Chou</option>
+    <option value="carotte">Carotte</option>
+    <option value="poivron">Poivron</option>
+    <option value="piment">Piment</option>
+    <option value="concombre">Concombre</option>
+    <option value="courgette">Courgette</option>
+    <option value="aubergine">Aubergine</option>
+    <option value="oignon">Oignon</option>
+    <option value="ail">Ail</option>
+    <option value="betterave">Betterave</option>
+    <option value="radis">Radis</option>
+    <option value="pois">Pois</option>
+    <option value="celeri">Céleri</option>
+    <option value="persil">Persil</option>
+    <option value="basilic">Basilic</option>
+    <option value="melon">Melon</option>
+    <option value="pasteque">Pastèque</option>
+    <option value="mais">Maïs doux</option>
+    <option value="ciboulette">Ciboulette</option>
+    <option value="coriandre">Coriandre</option>
+  </select>
+</div>
+
+<!-- NOMBRE DE PLANTES -->
+<div class="champ">
+  <input type="number" id="plants" placeholder="Nombre de plantes">
+</div>
+
+<!-- EAU PAR PLANTE -->
+<div class="champ">
+  <input type="number" id="eauPlante" placeholder="Eau par plante (L / jour)">
+</div>
+
+<!-- JOURS -->
+<div class="champ">
+  <input type="number" id="jours" placeholder="Durée du cycle (jours)">
+</div>
+
+<button class="calcul" onclick="calculer()">💡 Calculer</button>
+
+<div class="resultat" id="resultat" style="display:none;">
+  <p>🌊 Eau par jour : <b><span id="jour"></span> L</b></p>
+  <p>💧 Eau totale cycle : <b><span id="totalL"></span> L</b></p>
+  <p>🚿 Eau totale cycle : <b><span id="totalM3"></span> m³</b></p>
+</div>
+
+</main>
+
+<script>
+let mode="auto";
+
+const data = {
+  tomate:{eau:1.5, jours:120},
+  gombo:{eau:1.2, jours:100},
+  haricot:{eau:1.0, jours:60},
+  laitue:{eau:0.8, jours:45},
+  epinard:{eau:0.9, jours:40},
+  chou:{eau:1.8, jours:90},
+  carotte:{eau:0.7, jours:80},
+  poivron:{eau:1.4, jours:150},
+  piment:{eau:1.3, jours:150},
+  concombre:{eau:1.6, jours:70},
+  courgette:{eau:1.7, jours:65},
+  aubergine:{eau:1.6, jours:140},
+  oignon:{eau:0.6, jours:100},
+  ail:{eau:0.5, jours:120},
+  betterave:{eau:0.7, jours:90},
+  radis:{eau:0.6, jours:30},
+  pois:{eau:1.1, jours:75},
+  celeri:{eau:1.2, jours:120},
+  persil:{eau:0.4, jours:90},
+  basilic:{eau:0.5, jours:60},
+  melon:{eau:2.0, jours:90},
+  pasteque:{eau:2.5, jours:100},
+  mais:{eau:1.8, jours:110},
+  ciboulette:{eau:0.4, jours:80},
+  coriandre:{eau:0.6, jours:45}
+};
+
+function changerMode(m){
+  mode=m;
+  blocCulture.style.display = (mode==="auto")?"block":"none";
+  if(mode==="manuel"){
+    culture.value="";
+    eauPlante.value="";
+    jours.value="";
+  }
+}
+
+function remplirAuto(){
+  if(mode!=="auto") return;
+  const c = culture.value;
+  if(data[c]){
+    eauPlante.value = data[c].eau;
+    jours.value = data[c].jours;
+  }
+}
+
+function calculer(){
+  const n = Number(plants.value);
+  const eau = Number(eauPlante.value);
+  const j = Number(jours.value);
+
+  if(!n || !eau || !j){
+    alert("Veuillez remplir tous les champs");
+    return;
+  }
+
+  const eauJour = n * eau;
+  const eauTotal = eauJour * j;
+
+  resultat.style.display="block";
+  jour.innerText = eauJour.toFixed(2);
+  totalL.innerText = eauTotal.toFixed(2);
+  totalM3.innerText = (eauTotal/1000).toFixed(3);
+}
+
+changerMode("auto");
+</script>
+
+</body>
+</html>

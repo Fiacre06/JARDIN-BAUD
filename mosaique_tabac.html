@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mosaïque du tabac – AgroSoin</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e8f5e9;
+    color: #333;
+}
+
+/* Bouton retour transparent */
+.back-btn{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: bounce 1.6s infinite ease;
+    z-index: 1000;
+}
+.back-btn i { font-style: normal; font-weight: bold; }
+
+@keyframes bounce {
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-12px)}
+    50%{transform:translateY(0)}
+    70%{transform:translateY(-6px)}
+    100%{transform:translateY(0)}
+}
+.back-btn.rotate{ animation:rotate360 0.6s linear forwards; }
+@keyframes rotate360{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+header {
+    background: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Carte plein écran */
+.card-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Slider images */
+.slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px;
+    scroll-behavior: smooth;
+    flex-shrink: 0;
+}
+.slider::-webkit-scrollbar { display: none; }
+
+.slider img {
+    width: 300px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 15px;
+    flex-shrink: 0;
+}
+
+/* Texte vertical scrollable */
+.text-scroll {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0 15px 20px 15px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 20px;
+}
+
+.text-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.text-scroll::-webkit-scrollbar-thumb {
+    background: #1b5e20;
+    border-radius: 10px;
+}
+
+.text-scroll h2 {
+    color: #2e7d32;
+    margin-top: 15px;
+}
+.text-scroll p, .text-scroll ul {
+    font-size: 15px;
+    line-height: 1.5;
+}
+.text-scroll ul { padding-left: 20px; }
+.text-scroll li { margin-bottom: 6px; }
+
+</style>
+</head>
+<body>
+
+<div class="back-btn" id="backBtn"><i>←</i></div>
+
+<header>
+Mosaïque du tabac – <em>Tobacco Mosaic Virus (TMV)</em>
+</header>
+
+<div class="card-container">
+
+    <!-- Images -->
+    <div class="slider">
+        <img src="img/mosaique_tabac.jpg" alt="Mosaïque du tabac feuille">
+        <img src="img/mosaique_tabac2.jpg" alt="Mosaïque du tabac plante">
+        <img src="img/mosaique_tabac3.jpg" alt="Mosaïque du tabac culture">
+    </div>
+
+    <!-- Texte -->
+    <div class="text-scroll">
+
+        <h2>Description</h2>
+        <p>
+La mosaïque du tabac est une maladie virale très répandue causée par le
+<em>Tobacco Mosaic Virus (TMV)</em>. Elle touche le tabac mais aussi plusieurs cultures
+maraîchères comme la tomate, le piment et l’aubergine.
+        </p>
+
+        <h2>Symptômes</h2>
+        <ul>
+            <li>Mosaïque vert clair et vert foncé sur les feuilles.</li>
+            <li>Déformation et rigidité des feuilles.</li>
+            <li>Nanisme des plants.</li>
+            <li>Baisse importante du rendement.</li>
+        </ul>
+
+        <h2>Mode de transmission</h2>
+        <ul>
+            <li>Contact mécanique (mains, vêtements, outils).</li>
+            <li>Résidus de plantes infectées.</li>
+            <li>Semences contaminées.</li>
+            <li>Manipulation de feuilles de tabac.</li>
+        </ul>
+
+        <h2>Moyens de lutte</h2>
+        <ul>
+            <li>Arracher et détruire les plants infectés.</li>
+            <li>Désinfecter les outils et les mains.</li>
+            <li>Utiliser des semences certifiées.</li>
+            <li>Éviter de fumer dans les champs.</li>
+        </ul>
+
+        <h2>Prévention</h2>
+        <ul>
+            <li>Rotation culturale.</li>
+            <li>Hygiène stricte du personnel agricole.</li>
+            <li>Nettoyage régulier du matériel.</li>
+            <li>Utilisation de variétés tolérantes si disponibles.</li>
+        </ul>
+
+    </div>
+</div>
+
+<script>
+document.getElementById("backBtn").addEventListener("click", function(){
+    const btn = this;
+    btn.classList.add("rotate");
+    setTimeout(()=>btn.classList.remove("rotate"), 600);
+    setTimeout(()=>{ window.location.href="pageAlerte.html"; }, 300);
+});
+</script>
+
+</body>
+</html>

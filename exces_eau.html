@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pourriture Racinaire – AgroSoin</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e3f2fd;
+    color: #333;
+}
+
+/* Bouton retour transparent */
+.back-btn{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: bounce 1.6s infinite ease;
+    z-index: 1000;
+}
+.back-btn i { font-style: normal; font-weight: bold; }
+
+@keyframes bounce {
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-12px)}
+    50%{transform:translateY(0)}
+    70%{transform:translateY(-6px)}
+    100%{transform:translateY(0)}
+}
+.back-btn.rotate{ animation:rotate360 0.6s linear forwards; }
+@keyframes rotate360{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+header {
+    background: #1565c0;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Carte plein écran */
+.card-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Slider horizontal */
+.slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px;
+    scroll-behavior: smooth;
+    flex-shrink: 0;
+}
+.slider::-webkit-scrollbar { display: none; }
+
+.slider img {
+    width: 300px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 15px;
+    flex-shrink: 0;
+}
+
+/* Texte scrollable */
+.text-scroll {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0 15px 20px 15px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 20px;
+}
+
+.text-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.text-scroll::-webkit-scrollbar-thumb {
+    background: #1565c0;
+    border-radius: 10px;
+}
+
+.text-scroll h2 {
+    color: #1565c0;
+    margin-top: 15px;
+}
+.text-scroll p, .text-scroll ul {
+    font-size: 15px;
+    line-height: 1.5;
+}
+.text-scroll ul { padding-left: 20px; }
+.text-scroll li { margin-bottom: 6px; }
+
+</style>
+</head>
+<body>
+
+<div class="back-btn" id="backBtn"><i>←</i></div>
+
+<header>
+Excès d’eau / Pourriture Racinaire
+</header>
+
+<div class="card-container">
+
+    <!-- Slider images -->
+    <div class="slider">
+        <img src="img/pourriture1.jpg" alt="Pourriture Racinaire 1">
+        <img src="img/pourriture2.jpg" alt="Pourriture Racinaire 2">
+        <img src="img/pourriture3.jpg" alt="Pourriture Racinaire 3">
+    </div>
+
+    <!-- Texte scrollable -->
+    <div class="text-scroll">
+
+        <h2>Description</h2>
+        <p>
+La pourriture racinaire est provoquée par un excès d’eau dans le sol qui entraîne le développement de champignons pathogènes attaquant les racines. Elle provoque l’asphyxie racinaire et la mort progressive des plantes.
+        </p>
+
+        <h2>Symptômes / Dégâts</h2>
+        <ul>
+            <li>Flétrissement général des plantes malgré un sol humide.</li>
+            <li>Racines molles, brunâtres et en décomposition.</li>
+            <li>Retard de croissance et chute prématurée des feuilles.</li>
+            <li>Plantes sensibles aux maladies secondaires et stress hydrique.</li>
+        </ul>
+
+        <h2>Plantes sensibles</h2>
+        <ul>
+            <li>Tomate</li>
+            <li>Concombre</li>
+            <li>Poivron</li>
+            <li>Salade</li>
+        </ul>
+
+        <h2>Moyens de lutte et prévention</h2>
+        <ul>
+            <li>Améliorer le drainage du sol et éviter l’excès d’irrigation.</li>
+            <li>Éviter les sols compactés ou mal drainés.</li>
+            <li>Utiliser des plants sains et non stressés par la sécheresse ou l’eau.</li>
+            <li>Alterner les cultures et traiter le sol avec des fongicides autorisés si nécessaire.</li>
+        </ul>
+
+    </div>
+</div>
+
+<script>
+document.getElementById("backBtn").addEventListener("click", function(){
+    const btn = this;
+    btn.classList.add("rotate");
+    setTimeout(()=>btn.classList.remove("rotate"), 600);
+    setTimeout(()=>{ window.location.href="pageAlerte.html"; }, 300);
+});
+</script>
+
+</body>
+</html>

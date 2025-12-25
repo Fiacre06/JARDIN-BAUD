@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="JardinExpress - Planificateur de jardin potager tropical.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JardinExpress-Plantes Potagères</title>
+
+  <style>
+    /* Header */
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap:0px;
+        padding:0px;
+        height:100px;
+        width:340x;
+        background-image: url("logo-jardin1.jpg");
+        color: white;
+        text-align: center;
+    }
+
+    header .logo {
+        width: 130px;
+        height: 150px;
+        border-radius: 0%;
+    }
+
+    /* ===== FILTRES HORIZONTAUX DEFILABLES ===== */
+.filter-buttons {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 12px;
+    padding: 12px;
+    margin: 10px;
+    scrollbar-width: none; /* Firefox */
+}
+
+.filter-buttons::-webkit-scrollbar {
+    display: none; /* Chrome */
+}
+
+.filter-buttons button {
+    min-width: 120px;
+    height: 80px;
+    border-radius: 14px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    text-shadow: 1px 1px 3px black;
+    transition: transform 0.3s, box-shadow 0.3s;
+    flex-shrink: 0;
+}
+
+.filter-buttons button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+}
+    /* ===== IMAGES DES FILTRES ===== */
+.btn-feuilles     { background-image: url("feuilles.jpg"); }
+.btn-fruits       { background-image: url("fruits.jpg"); }
+.btn-bulbes       { background-image: url("bulbes.jpg"); }
+.btn-racines      { background-image: url("racines.jpg"); }
+.btn-tubercules   { background-image: url("tubercules.jpg"); }
+.btn-tiges        { background-image: url("tiges.jpg"); }
+.btn-fleurs       { background-image: url("fleurs.jpg"); }
+.btn-graines      { background-image: url("graines.jpg"); }
+.btn-all          { background-image: url("tout.jpg"); }
+
+   
+
+    /* Conteneur de recherche */
+    .search-container {
+        width: 80%;
+        max-width: 500px;
+        margin: 10px auto 20px;
+        display: flex;
+        border: 5px solid #4CAF50;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .search-container input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .search-container button {
+        background-color: #4CAF50;
+        align-items: center;
+        color: white;
+        border-radius: 10px;
+        padding: 0 5px;
+        margin: 1px 1px;
+        cursor: pointer;
+        font-size: 15px;
+        transition: background-color 0.3s;
+    }
+
+    .search-container button:hover {
+        background-color: #45a049;
+    }
+
+    /* Conteneur des cartes */
+    #redirect-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 🔥 DEUX CARTES PAR LIGNE */
+    gap: 15px;
+    padding: 15px;
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;          /* DÉFILEMENT VERTICAL */
+    justify-items: center;
+    padding-bottom: 130px;     /* évite chevauchement boutons bas */
+}
+
+    /* Cartes */
+    .card-redirect {
+    width: 100%;
+    height: 150px;
+    max-width: 180px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+    .card-redirect:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+
+    .card-label {
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        background: rgba(0,0,0,0.6);
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
+   
+.share-menu.active { pointer-events: auto; }
+
+.share-item {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: scale(0);
+    transition: transform 0.5s cubic-bezier(0.68,-0.55,0.265,1.55), opacity 0.5s;
+}
+
+/* Container des boutons */
+.bottom-buttons {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 9999;
+}
+
+/* Boutons circulaires animés */
+.animated-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 36px;
+    color: #FF0000;
+    background-color: rgba(0, 0, 0, 0.5); /* noir à 50% */
+    box-shadow: 0 0 15px rgba(76,175,80,0.5), 0 0 25px rgba(76,175,80,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s, box-shadow 0.3s, background 1s;
+    animation: pulseHalo 1.5s infinite;
+}
+
+/* Hover */
+.animated-btn:hover {
+    transform: scale(1.2) rotate(-5deg);
+    box-shadow: 0 0 25px rgba(76,175,80,0.6), 0 0 40px rgba(76,175,80,0.4);
+}
+
+/* Halo pulsant */
+@keyframes pulseHalo {
+    0%,100% { transform: scale(1); box-shadow: 0 0 25px rgba(76,175,80,0.5), 0 0 25px rgba(76,175,80,0.3); }
+    50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(76,175,80,0.7), 0 0 40px rgba(76,175,80,0.5); }
+}
+
+/* Bounce */
+@keyframes bounce {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.3); }
+    50% { transform: scale(0.9); }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Menu orbitant pour le bouton 🌿 */
+.share-menu {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.share-menu.active { pointer-events: auto; }
+
+.share-item {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: scale(0);
+    transition: transform 0.5s cubic-bezier(0.68,-0.55,0.265,1.55), opacity 0.5s;
+}
+
+/* Effet orbital pour les icônes */
+@keyframes orbit {
+    0% { transform: rotate(0deg) translateX(90px) rotate(0deg) scale(1); }
+    100% { transform: rotate(360deg) translateX(90px) rotate(-360deg) scale(1); }
+}
+
+/* Lorsque menu actif, appliquer l’orbite */
+.share-menu.active .share-item {
+    animation: orbit 3s linear infinite;
+}
+    
+/* Responsive */
+@media (max-width:480px){
+    .animated-btn { width: 60px; height: 60px; font-size:28px; }
+    .share-item { width: 45px; height: 45px; font-size:20px; }
+}
+    
+    /* Images de fond */
+    #tomate { background-image: url("tomate.jpg"); }
+    #carotte { background-image: url("carotte.jpg"); }
+    #piment { background-image: url("piment.jpg"); }
+    #oignon { background-image: url("oignon.jpg"); }
+    #chou { background-image: url("chou.jpg"); }
+    #laitue { background-image: url("laitue.jpg"); }
+    #poivron { background-image: url("poivron.jpg"); }
+    #ail { background-image: url("ail.jpg"); }
+    #pomme_de_terre { background-image: url("pomme_de_terre.jpg"); }
+    #haricot { background-image: url("haricot.jpg"); }
+    #poireau { background-image: url("poireau.jpg"); }
+    #betterave { background-image: url("betterave.jpg"); }
+    #epinard { background-image: url("epinard.jpg"); }
+    #chou_fleur { background-image: url("chou_fleur.jpg"); }
+    #brocoli { background-image: url("brocoli.jpg"); }
+    #amarante { background-image: url("amarante.jpg"); }
+    #concombre { background-image: url("concombre.jpg"); }
+    #gombo { background-image: url("gombo.jpg"); }
+     #oignon_vert{ background-image: url("oignon_vert.jpg"); }
+     #pasteque { background-image: url("pasteque.jpg"); }
+     #gingembre { background-image: url("gingembre.jpg"); }
+    #aubergine { background-image: url("aubergine.jpg"); }
+     #navet { background-image: url("navet.jpg"); }
+     #pois { background-image: url("pois.jpg"); }
+     #radis { background-image: url("radis.jpg"); }
+    #celeri { background-image: url("céleri.jpg"); }
+    #basilic { background-image: url("basilic.jpg"); }
+#menthe { background-image: url("menthe.jpg"); }
+#persil { background-image: url("persil.jpg"); }
+#coriandre { background-image: url("coriandre.jpg"); }
+#patisson { background-image: url("patisson.jpg"); }
+#courgette { background-image: url("courgette.jpg"); }
+#potiron { background-image: url("potiron.jpg"); }
+#melon { background-image: url("melon.jpg"); }
+#taro { background-image: url("taro.jpg"); }
+#pois-chiche { background-image: url("pois-chiche.jpg"); }
+#topinambour { background-image: url("topinambour.jpg"); }
+#radis-noir { background-image: url("radis-noir.jpg"); }
+#chou-rave { background-image: url("chou-rave.jpg"); }
+#cresson { background-image: url("cresson.jpg"); }
+#mais-doux { background-image: url("mais-doux.jpg"); }
+#feve { background-image: url("feve.jpg"); }
+#panais { background-image: url("panais.jpg"); }
+#talinum { background-image: url("talinum.jpg"); }
+    footer {
+        text-align: center;
+        padding: 15px;
+        background-color: #4CAF50;
+        color: white;
+    }
+ </style>
+</head>
+<body>
+  <header>
+    <h1>JardinExpress</h1>
+      
+     <div id="bottomButtons" class="bottom-buttons">
+    <button class="animated-btn" id="btnAlert" title="Alerte">💡</button>
+    <button class="animated-btn" id="btnAdd" title="Ajouter">📆</button>
+    <button class="animated-btn" id="btnIdea" title="Reconnaissance">📟</button>
+    <button class="animated-btn" id="btnShare" title="Partager">!</button>
+</div>
+
+<!-- Menu orbitant pour le bouton 🌿 uniquement -->
+<div id="shareMenu" class="share-menu">
+    <a href="#" class="share-item" data-type="whatsapp" title="WhatsApp">🟢</a>
+    <a href="#" class="share-item" data-type="xender" title="Xender">📤</a>
+    <a href="#" class="share-item" data-type="messenger" title="Messenger">🔵</a>
+    <a href="#" class="share-item" data-type="email" title="Email">✉️</a>
+    <a href="#" class="share-item" data-type="copy" title="Copier lien">📋</a>
+</div>
+      
+  </header>
+
+  <main>
+    <p style="text-align:center;">"De nombreuses plantes potagères à découvrir"</p>
+
+    <div class="filter-buttons">
+  <button class="btn-feuilles" onclick="filterCategory('feuilles')">Feuilles</button>
+  <button class="btn-bulbes" onclick="filterCategory('bulbes')">Bulbes</button>
+  <button class="btn-fruits" onclick="filterCategory('fruits')">Fruits</button>
+  <button class="btn-tiges" onclick="filterCategory('tiges')">Tiges</button>
+  <button class="btn-racines" onclick="filterCategory('racines')">Racines</button>
+  <button class="btn-fleurs" onclick="filterCategory('fleurs')">Fleurs</button>
+  <button class="btn-graines" onclick="filterCategory('graines')">Graines</button>
+  <button class="btn-tubercules" onclick="filterCategory('tubercules')">Tubercules</button>
+  <button class="btn-all" onclick="filterCategory('all')">Tout</button>
+</div>
+
+    <!-- Zone de recherche -->
+    <div class="search-container">
+      <input type="text" id="searchBar" placeholder="Rechercher une plante..." onkeyup="filterCards()">
+      <button onclick="filterCards()">🔍</button>
+    </div>
+
+    <!-- Cartes -->
+    <div id="redirect-buttons">
+
+      <div class="card-redirect" id="tomate" data-category="fruits" onclick="window.location.href='tomate.html'">
+          <div class="card-label">Tomate-Solanum lycoperciscum</div>
+      </div>
+
+      <div class="card-redirect" id="carotte" data-category="racines" onclick="window.location.href='carotte.html'">
+          <div class="card-label">Carotte-Daucus carotta</div>
+      </div>
+
+      <div class="card-redirect" id="piment" data-category="fruits" onclick="window.location.href='piment.html'">
+          <div class="card-label">Piment-Capsicum frutescens</div>
+      </div>
+
+      <div class="card-redirect" id="oignon" data-category="bulbes" onclick="window.location.href='oignon.html'">
+          <div class="card-label">Oignon-Allium cepa</div>
+      </div>
+
+      <div class="card-redirect" id="chou" data-category="feuilles" onclick="window.location.href='chou.html'">
+          <div class="card-label">Chou-Brassica oleracea</div>
+      </div>
+
+      <div class="card-redirect" id="laitue" data-category="feuilles" onclick="window.location.href='laitue.html'">
+          <div class="card-label">Laitue-Lactuca sativa</div>
+      </div>
+
+      <div class="card-redirect" id="poivron" data-category="fruits" onclick="window.location.href='poivron.html'"> 
+        <div class="card-label">Poivron - Capsicum annuum</div> 
+      </div>
+
+      <div class="card-redirect" id="ail" data-category="bulbes" onclick="window.location.href='ail.html'"> 
+        <div class="card-label">Ail - Allium sativum</div> 
+      </div>
+
+      <div class="card-redirect" id="pomme_de_terre" data-category="tubercules" onclick="window.location.href='pomme_de_terre.html'"> 
+        <div class="card-label">Pomme de terre - Solanum tuberosum</div> 
+      </div>
+
+      <div class="card-redirect" id="haricot" data-category="graines" onclick="window.location.href='haricot_vert.html'"> 
+        <div class="card-label">Haricot vert - Phaseolus vulgaris</div> 
+      </div>
+
+      <div class="card-redirect" id="poireau" data-category="tiges" onclick="window.location.href='poireau.html'"> 
+        <div class="card-label">Poireau - Allium porrum</div> 
+      </div>
+
+      <div class="card-redirect" id="betterave" data-category="racines" onclick="window.location.href='betterave.html'"> 
+        <div class="card-label">Betterave - Beta vulgaris</div> 
+      </div>
+
+      <div class="card-redirect" id="epinard" data-category="feuilles" onclick="window.location.href='epinard.html'"> 
+        <div class="card-label">Epinard - Spinacia oleracea</div> 
+      </div>
+
+      <div class="card-redirect" id="chou_fleur" data-category="fleurs" onclick="window.location.href='chou_fleur.html'"> 
+        <div class="card-label">Chou-fleur - Brassica oleracea var. botrytis</div> 
+      </div>
+
+      <div class="card-redirect" id="brocoli" data-category="fleurs" onclick="window.location.href='brocoli.html'"> 
+        <div class="card-label">Brocoli - Brassica oleracea var. italica</div> 
+      </div>
+        
+<div class="card-redirect" id="amarante" data-category="feuilles" onclick="window.location.href='amarante.html'">
+  <div class="card-label">Amarante - Amaranthus spp.</div>
+</div>
+
+<div class="card-redirect" id="gombo" data-category="fruits" onclick="window.location.href='gombo.html'">
+  <div class="card-label">Gombo - Abelmoschus esculentus</div>
+</div>
+
+<div class="card-redirect" id="talinum" data-category="feuilles" onclick="window.location.href='talinum.html'">
+  <div class="card-label">Talinum - Talinum triangulare</div>
+</div>
+
+<div class="card-redirect" id="gingembre" data-category="bulbes" onclick="window.location.href='gingembre.html'">
+  <div class="card-label">gingembre - zingiber officinale</div>
+</div>
+
+
+<div class="card-redirect" id="courgette" data-category="fruits" onclick="window.location.href='courgette.html'">
+  <div class="card-label">Courgette - Cucurbita pepo</div>
+</div>
+
+
+<div class="card-redirect" id="oignon_vert" data-category="feuilles" onclick="window.location.href='oignon_vert.html'">
+  <div class="card-label">Oignon vert - Allium fistulosum</div>
+</div>
+
+<div class="card-redirect" id="piment_africain" data-category="fruits" onclick="window.location.href='piment_africain.html'">
+  <div class="card-label">Piment africain - Capsicum chinense</div>
+</div>
+
+<div class="card-redirect" id="gingembre" data-category="racines" onclick="window.location.href='gingembre.html'">
+  <div class="card-label">Gingembre - Zingiber officinale</div>
+</div>
+     
+
+<div class="card-redirect" id="concombre" data-category="fruits" onclick="window.location.href='concombre.html'">
+  <div class="card-label">Concombre-Cucumis sativus </div>
+</div>
+        
+ <div class="card-redirect" id="aubergine" data-category="légumes" onclick="window.location.href='aubergine.html'"> 
+  <div class="card-label">Aubergine - Solanum melongena</div> 
+</div>
+
+<div class="card-redirect" id="navet" data-category="légumes" onclick="window.location.href='navet.html'"> 
+  <div class="card-label">Navet - Brassica rapa</div> 
+</div>
+
+<div class="card-redirect" id="radis" data-category="légumes" onclick="window.location.href='radis.html'"> 
+  <div class="card-label">Radis - Raphanus sativus</div> 
+</div>
+
+<div class="card-redirect" id="celeri" data-category="légumes" onclick="window.location.href='celeri.html'"> 
+  <div class="card-label">Céleri - Apium graveolens</div> 
+</div>
+
+<div class="card-redirect" id="pois" data-category="légumes" onclick="window.location.href='pois.html'"> 
+  <div class="card-label">Pois - Pisum sativum</div> 
+</div>
+        
+        <div class="card-redirect" id="basilic" data-category="herbes" onclick="window.location.href='basilic.html'"> 
+  <div class="card-label">Basilic - Ocimum basilicum</div> 
+</div>
+
+<div class="card-redirect" id="menthe" data-category="herbes" onclick="window.location.href='menthe.html'"> 
+  <div class="card-label">Menthe - Mentha spp.</div> 
+</div>
+
+<div class="card-redirect" id="persil" data-category="herbes" onclick="window.location.href='persil.html'"> 
+  <div class="card-label">Persil - Petroselinum crispum</div> 
+</div>
+
+<div class="card-redirect" id="coriandre" data-category="herbes" onclick="window.location.href='coriandre.html'"> 
+  <div class="card-label">Coriandre - Coriandrum sativum</div> 
+</div>
+
+<div class="card-redirect" id="patisson" data-category="légumes" onclick="window.location.href='patisson.html'"> 
+  <div class="card-label">Pâtisson - Cucurbita pepo var. patisson</div> 
+</div>
+
+<div class="card-redirect" id="courge" data-category="légumes" onclick="window.location.href='courge.html'"> 
+  <div class="card-label">Courge - Cucurbita spp.</div> 
+</div>
+
+<div class="card-redirect" id="potiron" data-category="fruits" onclick="window.location.href='potiron.html'"> 
+  <div class="card-label">Potiron - Cucurbita maxima</div> 
+</div>
+
+<div class="card-redirect" id="melon" data-category="fruits" onclick="window.location.href='melon.html'"> 
+  <div class="card-label">Melon - Cucumis melo</div> 
+</div>
+
+<div class="card-redirect" id="taro" data-category="légumes" onclick="window.location.href='taro.html'"> 
+  <div class="card-label">Taro - Colocasia esculenta</div> 
+</div>
+
+<div class="card-redirect" id="pois-chiche" data-category="légumes" onclick="window.location.href='pois-chiche.html'"> 
+  <div class="card-label">Pois chiche - Cicer arietinum</div> 
+</div>
+
+<div class="card-redirect" id="topinambour" data-category="légumes" onclick="window.location.href='topinambour.html'"> 
+  <div class="card-label">Topinambour - Helianthus tuberosus</div> 
+</div>
+
+<div class="card-redirect" id="radis-noir" data-category="légumes" onclick="window.location.href='radis-noir.html'"> 
+  <div class="card-label">Radis noir - Raphanus sativus var. niger</div> 
+</div>
+
+<div class="card-redirect" id="chou-rave" data-category="légumes" onclick="window.location.href='chou-rave.html'"> 
+  <div class="card-label">Chou-rave - Brassica oleracea var. gongylodes</div> 
+</div>
+
+<div class="card-redirect" id="cresson" data-category="herbes" onclick="window.location.href='cresson.html'"> 
+  <div class="card-label">Cresson - Nasturtium officinale</div> 
+</div>
+
+<div class="card-redirect" id="mais-doux" data-category="céréales" onclick="window.location.href='mais-doux.html'"> 
+  <div class="card-label">Maïs doux - Zea mays var. saccharata</div> 
+</div>
+
+<div class="card-redirect" id="feve" data-category="légumes" onclick="window.location.href='feve.html'"> 
+  <div class="card-label">Fève - Vicia faba</div> 
+</div>
+
+<div class="card-redirect" id="panais" data-category="légumes" onclick="window.location.href='panais.html'"> 
+  <div class="card-label">Panais - Pastinaca sativa</div> 
+</div>
+
+<div class="card-redirect" id="salsifis" data-category="légumes" onclick="window.location.href='salsifis.html'"> 
+  <div class="card-label">Salsifis - Tragopogon porrifolius</div> 
+</div>
+
+
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 JardinExpress - Baudler-Fiacre GBENOU-FANOU</p>
+    <p>Email: gbenoufanoubaudlerfiacre@gmail.com </p>
+  </footer>
+
+  <script>
+    // Filtre par texte
+    function filterCards() {
+      const input = document.getElementById('searchBar');
+      const filter = input.value.toLowerCase();
+      const cards = document.querySelectorAll('.card-redirect');
+
+      cards.forEach(card => {
+        const label = card.querySelector('.card-label').textContent.toLowerCase();
+        if (label.includes(filter)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Filtre par catégorie
+    function filterCategory(category) {
+      const cards = document.querySelectorAll('.card-redirect');
+
+      cards.forEach(card => {
+        if (category === 'all') {
+          card.style.display = 'flex';
+        } else {
+          const cardCategory = card.getAttribute('data-category');
+          card.style.display = (cardCategory === category) ? 'flex' : 'none';
+        }
+      });
+
+      // Réinitialiser la recherche
+      document.getElementById('searchBar').value = '';
+    }
+     
+// Bouton 🌿 : menu orbitant + redirection
+const shareBtn = document.getElementById("btnShare");
+const shareMenu = document.getElementById("shareMenu");
+let menuOpen = false;
+
+shareBtn.addEventListener("click", ()=>{
+    menuOpen = !menuOpen;
+    shareMenu.classList.toggle("active", menuOpen);
+
+    const icons = shareMenu.querySelectorAll('.share-item');
+    icons.forEach((el, i)=>{
+        if(menuOpen){
+            el.style.opacity = 1;
+            el.style.transform = `rotate(${i*72}deg) translateX(90px) rotate(${-i*72}deg)`;
+        } else {
+            el.style.opacity = 0;
+            el.style.transform = "scale(0)";
+        }
+    });
+
+    // Animation bounce
+    shareBtn.style.animation = "bounce 0.5s";
+    setTimeout(()=>shareBtn.style.animation="pulseHalo 2s infinite",500);
+
+    // ➤ Redirection du bouton 🌿 après 0.8 sec pour voir le menu
+    setTimeout(()=>{
+        window.location.href = "pagePartage.html"; // Remplace par ta page
+    }, 800);
+});
+
+
+// Redirection + animations pour les autres boutons
+["btnAdd","btnIdea","btnAlert"].forEach(id=>{
+    const btn = document.getElementById(id);
+    btn.addEventListener("click", ()=>{
+        btn.style.animation = "bounce 0.5s";
+        setTimeout(()=>btn.style.animation="pulseHalo 2s infinite",500);
+
+        if(id==="btnAdd") window.location.href="pageAjouter.html";
+        if(id==="btnIdea") window.location.href="Reconnaissance.html";
+        if(id==="btnAlert") window.location.href="pageAlerte.html";
+    });
+});    
+   
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>JardinExpress | Calculatrice Agricole</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body{
+  background:#f2f7f4;
+  color:#333;
+}
+
+/* ===== BOUTON RETOUR ===== */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: bounce 1.6s infinite ease;
+    z-index: 1000;
+}
+.back-btn i { font-style: normal; font-weight: bold; }
+@keyframes bounce{
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-12px)}
+    50%{transform:translateY(0)}
+    70%{transform:translateY(-6px)}
+    100%{transform:translateY(0)}
+}
+.back-btn.rotate { animation: rotate360 0.6s linear forwards; }
+@keyframes rotate360 { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+/* ===== HEADER ===== */
+header{
+  background:linear-gradient(135deg,#2e7d32,#43a047);
+  color:#fff;
+  padding:25px 15px;
+  text-align:center;
+  border-bottom-left-radius:25px;
+  border-bottom-right-radius:25px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+header h1{
+  font-size:22px;
+  margin-bottom:6px;
+}
+
+header p{
+  font-size:13px;
+  opacity:0.95;
+}
+
+/* ===== CONTENU ===== */
+main{
+  padding:20px;
+}
+
+/* ===== GRILLE RESPONSIVE ===== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+  gap:15px;
+}
+
+/* ===== CARTES ===== */
+.card{
+  background:#ffffff;
+  border-radius:16px;
+  padding:20px 15px;
+  text-align:center;
+  box-shadow:0 6px 14px rgba(0,0,0,0.1);
+  cursor:pointer;
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover{
+  transform:translateY(-5px) scale(1.02);
+  box-shadow:0 10px 20px rgba(0,0,0,0.18);
+}
+
+.card .icon{
+  font-size:36px;
+  margin-bottom:10px;
+}
+
+.card h2{
+  font-size:16px;
+  margin-bottom:6px;
+  color:#2e7d32;
+}
+
+.card p{
+  font-size:13px;
+  color:#666;
+}
+
+/* ===== FOOTER ===== */
+footer{
+  text-align:center;
+  padding:15px 10px;
+  font-size:12px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="back-btn" id="backBtn"><i>←</i></div>
+
+<header>
+  <h1>🌱 JardinExpress</h1>
+  <p>Calculs agricoles simples et précis</p>
+</header>
+
+<main>
+
+  <div class="grid">
+
+    <!-- 🔝 TOUJOURS EN PREMIER -->
+    <div class="card" onclick="ouvrir('planches.html')">
+      <div class="icon">🪵</div>
+      <h2>Nombre de planches</h2>
+      <p>Surface du champ et des planches</p>
+    </div>
+
+    <div class="card" onclick="ouvrir('densite.html')">
+      <div class="icon">🌿</div>
+      <h2>Densité de plantation</h2>
+      <p>Nombre total de plants</p>
+    </div>
+
+    <div class="card" onclick="ouvrir('semences.html')">
+      <div class="icon">🌾</div>
+      <h2>Quantité de semences</h2>
+      <p>Dose exacte à semer</p>
+    </div>
+
+    <div class="card" onclick="ouvrir('eau.html')">
+      <div class="icon">💧</div>
+      <h2>Besoin en eau</h2>
+      <p>Quantité d’eau par jour</p>
+    </div>
+
+    <div class="card" onclick="ouvrir('fumure.html')">
+      <div class="icon">♻️</div>
+      <h2>Fumure organique</h2>
+      <p>Compost & fumier</p>
+    </div>
+
+    <div class="card" onclick="ouvrir('engrais.html')">
+      <div class="icon">🧪</div>
+      <h2>Engrais minéraux</h2>
+      <p>NPK + Urée</p>
+    </div>
+
+    <!-- NOUVEAU BOUTON CALCULATEUR INTÉGRÉ -->
+    <div class="card" onclick="ouvrir('calculateur.html')">
+      <div class="icon">📊</div>
+      <h2>Calculateur intégré</h2>
+      <p>Coût, rendement et bénéfice estimé</p>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  © 2025 – JardinExpress | Agriculture durable
+</footer>
+
+<script>
+function ouvrir(page){
+  window.location.href = page;
+}
+
+// Fonction du bouton retour
+document.getElementById("backBtn").addEventListener("click", function(){
+    const btn = this;
+    btn.classList.add("rotate");
+    setTimeout(()=>btn.classList.remove("rotate"),600);
+    setTimeout(()=>{window.history.back()},300);
+});
+</script>
+
+</body>
+</html>

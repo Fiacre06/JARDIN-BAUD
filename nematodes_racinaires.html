@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nématodes racinaires – AgroSoin</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f1f8e9;
+    color: #333;
+}
+
+/* Bouton retour transparent */
+.back-btn{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: bounce 1.6s infinite ease;
+    z-index: 1000;
+}
+.back-btn i { font-style: normal; font-weight: bold; }
+
+@keyframes bounce {
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-12px)}
+    50%{transform:translateY(0)}
+    70%{transform:translateY(-6px)}
+    100%{transform:translateY(0)}
+}
+.back-btn.rotate{ animation:rotate360 0.6s linear forwards; }
+@keyframes rotate360{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+header {
+    background: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Carte plein écran */
+.card-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Slider horizontal */
+.slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px;
+    scroll-behavior: smooth;
+    flex-shrink: 0;
+}
+.slider::-webkit-scrollbar { display: none; }
+
+.slider img {
+    width: 300px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 15px;
+    flex-shrink: 0;
+}
+
+/* Texte scrollable */
+.text-scroll {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0 15px 20px 15px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 20px;
+}
+
+.text-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.text-scroll::-webkit-scrollbar-thumb {
+    background: #1b5e20;
+    border-radius: 10px;
+}
+
+.text-scroll h2 {
+    color: #2e7d32;
+    margin-top: 15px;
+}
+.text-scroll p, .text-scroll ul {
+    font-size: 15px;
+    line-height: 1.5;
+}
+.text-scroll ul { padding-left: 20px; }
+.text-scroll li { margin-bottom: 6px; }
+
+</style>
+</head>
+<body>
+
+<div class="back-btn" id="backBtn"><i>←</i></div>
+
+<header>
+Nématodes racinaires
+</header>
+
+<div class="card-container">
+
+    <!-- Images -->
+    <div class="slider">
+        <img src="img/nematodes_racinaires.jpg" alt="Nématodes racinaires 1">
+        <img src="img/nematodes_racinaires2.jpg" alt="Nématodes racinaires 2">
+        <img src="img/nematodes_racinaires3.jpg" alt="Plante infectée">
+    </div>
+
+    <!-- Texte -->
+    <div class="text-scroll">
+
+        <h2>Description</h2>
+        <p>
+Les nématodes racinaires (Meloidogyne spp.) sont des vers microscopiques qui parasitent les racines, formant des galles. Ils perturbent l’absorption de l’eau et des nutriments, entraînant un affaiblissement de la plante.
+        </p>
+
+        <h2>Symptômes / Dégâts</h2>
+        <ul>
+            <li>Présence de galles sur les racines.</li>
+            <li>Retard de croissance et affaiblissement général.</li>
+            <li>Feuilles jaunissantes et croissance ralentie.</li>
+            <li>Réduction du rendement et qualité des récoltes.</li>
+        </ul>
+
+        <h2>Plantes sensibles</h2>
+        <ul>
+            <li>Tomate</li>
+            <li>Carotte</li>
+            <li>Pomme de terre</li>
+            <li>Chou</li>
+            <li>Betterave</li>
+        </ul>
+
+        <h2>Moyens de lutte et prévention</h2>
+        <ul>
+            <li>Utiliser semences et plants certifiés sains.</li>
+            <li>Rotation culturale avec plantes non hôtes.</li>
+            <li>Arracher et détruire les plantes fortement infectées.</li>
+            <li>Amender le sol avec compost et maintenir sol sain et drainé.</li>
+        </ul>
+
+    </div>
+</div>
+
+<script>
+document.getElementById("backBtn").addEventListener("click", function(){
+    const btn = this;
+    btn.classList.add("rotate");
+    setTimeout(()=>btn.classList.remove("rotate"), 600);
+    setTimeout(()=>{ window.location.href="pageAlerte.html"; }, 300);
+});
+</script>
+
+</body>
+</html>

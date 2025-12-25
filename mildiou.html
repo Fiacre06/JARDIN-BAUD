@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mildiou – AgroSoin</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e0f2f1;
+    color: #333;
+}
+
+/* Bouton flottant retour */
+.back-btn{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: bounce 1.6s infinite ease;
+    z-index: 1000;
+}
+.back-btn i { font-style: normal; font-weight: bold; }
+@keyframes bounce {
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-12px)}
+    50%{transform:translateY(0)}
+    70%{transform:translateY(-6px)}
+    100%{transform:translateY(0)}
+}
+.back-btn.rotate{ animation:rotate360 0.6s linear forwards; }
+@keyframes rotate360{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+header {
+    background: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Carte principale pleine hauteur */
+.card-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* prend tout l'écran */
+    box-sizing: border-box;
+}
+
+/* Slider horizontal */
+.slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px;
+    scroll-behavior: smooth;
+    flex-shrink: 0;
+}
+.slider::-webkit-scrollbar { display: none; }
+
+.slider img {
+    width: 300px;
+    height: 150px; /* légèrement plus grand */
+    object-fit: cover;
+    border-radius: 15px;
+    flex-shrink: 0;
+}
+
+/* Texte scrollable vertical */
+.text-scroll {
+    flex: 1; /* prend tout l’espace restant */
+    overflow-y: auto;
+    margin: 0 15px 20px 15px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 20px;
+}
+.text-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.text-scroll::-webkit-scrollbar-thumb {
+    background: #228B22;
+    border-radius: 10px;
+}
+.text-scroll h2 {
+    color: #2e7d32;
+    margin-top: 15px;
+}
+.text-scroll p, .text-scroll ul {
+    font-size: 15px;
+    line-height: 1.5;
+}
+.text-scroll ul { padding-left: 20px; }
+.text-scroll li { margin-bottom: 5px; }
+
+</style>
+</head>
+<body>
+
+<div class="back-btn" id="backBtn"><i>←</i></div>
+
+<header> Mildiou </header>
+
+<div class="card-container">
+    <!-- Slider images -->
+    <div class="slider">
+        <img src="img/mildiou.jpg" alt="Mildiou 1">
+        <img src="img/mildiou2.jpg" alt="Mildiou 2">
+        <img src="img/mildiou3.jpg" alt="Mildiou 3">
+    </div>
+
+    <!-- Texte scrollable vertical -->
+    <div class="text-scroll">
+        <h2>Description</h2>
+        <p>Le mildiou est une maladie fongique fréquente qui attaque principalement la tomate, la pomme de terre et certaines cucurbitacées. Il est causé par le champignon <em>Phytophthora infestans</em>.</p>
+
+        <h2>Symptômes / Dégâts</h2>
+        <ul>
+            <li>Taches brunes et huileuses sur les feuilles.</li>
+            <li>Feuilles jaunissantes et desséchées.</li>
+            <li>Pourriture des fruits et tubercules.</li>
+            <li>Chute prématurée des feuilles.</li>
+        </ul>
+
+        <h2>Solutions / Traitements</h2>
+        <ul>
+            <li>Éliminer les parties infectées de la plante.</li>
+            <li>Éviter l’humidité excessive et l’arrosage sur le feuillage.</li>
+            <li>Utiliser des fongicides spécifiques autorisés pour le mildiou.</li>
+            <li>Alterner les cultures pour éviter l’accumulation du pathogène dans le sol.</li>
+        </ul>
+
+        <h2>Prévention</h2>
+        <ul>
+            <li>Rotation culturale 2–3 ans.</li>
+            <li>Utiliser semences ou plants sains.</li>
+            <li>Maintenir un sol bien drainé.</li>
+            <li>Éliminer parties malades.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+document.getElementById("backBtn").addEventListener("click", function(){
+    const btn = this;
+    btn.classList.add("rotate");
+    setTimeout(()=>btn.classList.remove("rotate"), 600);
+    setTimeout(()=>{ window.location.href="pageAlerte.html"; }, 300);
+});
+</script>
+
+</body>
+</html>

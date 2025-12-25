@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Nombre de planches | JardinExpress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --vert: #2e7d32;
+  --vert-clair: #e8f5e9;
+  --fond: #f4f8f6;
+  --carte: #ffffff;
+  --ombre: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:var(--fond); color:#333; }
+
+header {
+  background: linear-gradient(135deg, #1b5e20, #43a047);
+  color:white; padding:28px 18px; border-radius:0 0 25px 25px; box-shadow:var(--ombre); text-align:center;
+}
+
+header h1 { margin:0; font-size:24px; }
+header p { margin-top:8px; font-size:14px; opacity:0.95; }
+
+main { padding:22px 18px 30px; display:grid; gap:16px; }
+
+.champ { display:flex; gap:10px; background:var(--carte); padding:14px; border-radius:14px; box-shadow:var(--ombre); align-items:center; }
+
+input { flex:2; font-size:15px; border:none; outline:none; border-radius:10px; padding:10px; background:transparent; }
+select { flex:1; background:var(--vert-clair); color:var(--vert); font-weight:bold; border-radius:10px; padding:10px; cursor:pointer; }
+
+button.calcul { margin-top:10px; padding:16px; font-size:16px; border:none; border-radius:18px;
+  background:linear-gradient(135deg, #2e7d32, #66bb6a); color:white; font-weight:bold; cursor:pointer; box-shadow:var(--ombre); transition: transform 0.2s ease; }
+button.calcul:hover { transform: scale(1.02); }
+
+.resultat {
+  margin-top:12px;
+  background: linear-gradient(135deg,#ffffff,#f1f8e9);
+  padding:18px;
+  border-radius:18px;
+  box-shadow:var(--ombre);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.resultat p { margin:8px 0; font-size:15px; font-weight:500; }
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px);}
+  to { opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🪵 Calculatrice de planches</h1>
+</header>
+
+<main>
+
+<!-- LONGUEUR CHAMP -->
+<div class="champ">
+  <input type="number" id="longueur" placeholder="Longueur du champ">
+  <select id="uLong">
+    <option value="m">m</option>
+    <option value="dm">dm</option>
+    <option value="cm">cm</option>
+  </select>
+</div>
+
+<!-- LARGEUR CHAMP -->
+<div class="champ">
+  <input type="number" id="largeur" placeholder="Largeur du champ">
+  <select id="uLarg">
+    <option value="m">m</option>
+    <option value="dm">dm</option>
+    <option value="cm">cm</option>
+  </select>
+</div>
+
+<!-- LONGUEUR PLANCHE -->
+<div class="champ">
+  <input type="number" id="longPlanche" placeholder="Longueur d’une planche">
+  <select id="uLongPlan">
+    <option value="m">m</option>
+    <option value="dm">dm</option>
+    <option value="cm">cm</option>
+  </select>
+</div>
+
+<!-- LARGEUR PLANCHE -->
+<div class="champ">
+  <input type="number" id="largPlanche" placeholder="Largeur d’une planche">
+  <select id="uLargPlan">
+    <option value="m">m</option>
+    <option value="dm">dm</option>
+    <option value="cm">cm</option>
+  </select>
+</div>
+
+<!-- LARGEUR ALLÉE -->
+<div class="champ">
+  <input type="number" id="allee" placeholder="Largeur de l’allée">
+  <select id="uAllee">
+    <option value="m">m</option>
+    <option value="dm">dm</option>
+    <option value="cm">cm</option>
+  </select>
+</div>
+
+<button class="calcul" onclick="calculer()">💡 Calculer</button>
+
+<div class="resultat" id="resultat" style="display:none;">
+  <p id="surfaceChamp"></p>
+  <p id="surfacePlanche"></p>
+  <p id="nbPlanches"></p>
+</div>
+
+</main>
+
+<script>
+function convertToMeters(value, unit){
+  if(unit==="m") return value;
+  if(unit==="dm") return value/10;
+  if(unit==="cm") return value/100;
+  return value;
+}
+
+function calculer(){
+  const longueur = convertToMeters(parseFloat(document.getElementById("longueur").value), document.getElementById("uLong").value);
+  const largeur = convertToMeters(parseFloat(document.getElementById("largeur").value), document.getElementById("uLarg").value);
+  const longPlanche = convertToMeters(parseFloat(document.getElementById("longPlanche").value), document.getElementById("uLongPlan").value);
+  const largPlanche = convertToMeters(parseFloat(document.getElementById("largPlanche").value), document.getElementById("uLargPlan").value);
+  const allee = convertToMeters(parseFloat(document.getElementById("allee").value), document.getElementById("uAllee").value);
+
+  if(!longueur || !largeur || !longPlanche || !largPlanche || !allee){
+    alert("Veuillez remplir tous les champs");
+    return;
+  }
+
+  const surfaceChamp = longueur*largeur;
+  const surfacePlanche = longPlanche*largPlanche;
+
+  // Nombre de planches sur largeur et longueur
+  const nbPlanchesLargeur = Math.floor((largeur + allee)/(largPlanche + allee));
+  const nbPlanchesLongueur = Math.floor((longueur + allee)/(longPlanche + allee));
+  const totalPlanches = nbPlanchesLargeur * nbPlanchesLongueur;
+
+  document.getElementById("resultat").style.display = "block";
+  document.getElementById("surfaceChamp").innerText = `🌍 Surface du champ : ${surfaceChamp.toFixed(2)} m²`;
+  document.getElementById("surfacePlanche").innerText = `📏 Surface d’une planche : ${surfacePlanche.toFixed(2)} m²`;
+  document.getElementById("nbPlanches").innerText = `🪵 Nombre total de planches : ${totalPlanches}`;
+}
+</script>
+
+</body>
+</html>
